@@ -1,93 +1,85 @@
-<div class="container-fluid vh-100">
-  <div class="row h-100">
-    <!-- Sidebar -->
-    <nav class="col-md-2 bg-dark text-white p-3 collapse d-md-flex flex-column justify-content-between" id="sidebarMenu">
+<div class="container-fluid vh-100 d-flex flex-column">
+  <!-- Header always visible -->
+  <header class="d-flex justify-content-between align-items-center bg-white border-bottom p-3">
+    <div class="d-flex align-items-center">
+      <!-- Hamburger only visible on mobile -->
+      <button class="btn btn-dark d-md-none me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu">
+        ☰
+      </button>
+
+      <!-- Breadcrumb -->
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+          @for (crumb of breadcrumbs; track crumb.url; let last = $last) {
+            <li class="breadcrumb-item" [class.active]="last">
+              @if (!last) {
+                <a [routerLink]="crumb.url">{{ crumb.label }}</a>
+              } @else {
+                <span>{{ crumb.label }}</span>
+              }
+            </li>
+          }
+        </ol>
+      </nav>
+    </div>
+
+    <!-- Right side -->
+    <div class="d-flex align-items-center">
+      <p-button
+        icon="pi pi-bell"
+        [badge]="notificationCount.toString()"
+        badgeSeverity="danger"
+        [rounded]="true"
+        [text]="true"
+        ariaLabel="Notifications"
+        styleClass="notification-button me-3">
+      </p-button>
+
+      <p-avatar icon="pi pi-user" shape="circle" ariaLabel="Admin profile" class="me-2"></p-avatar>
+      <span class="fw-bold">Admin</span>
+    </div>
+  </header>
+
+  <!-- Body row -->
+  <div class="row flex-grow-1 h-100">
+    <!-- Sidebar (desktop only) -->
+    <nav class="col-md-2 bg-dark text-white p-3 d-none d-md-flex flex-column justify-content-between">
       <div>
         <h4 class="text-center mb-4">IPMS</h4>
         <ul class="nav flex-column">
-          <li class="nav-item">
-            <a class="nav-link text-white d-flex justify-content-between align-items-center" routerLink="/admin/dashboard" routerLinkActive="active">
-              Dashboard <span class="ms-auto"><i class="bi bi-speedometer2"></i></span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link text-white d-flex justify-content-between align-items-center" routerLink="/admin/policies" routerLinkActive="active">
-              Policies <span class="ms-auto"><i class="bi bi-file-earmark-text"></i></span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link text-white d-flex justify-content-between align-items-center" routerLink="/admin/customers" routerLinkActive="active">
-              Customers <span class="ms-auto"><i class="bi bi-people"></i></span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link text-white d-flex justify-content-between align-items-center" routerLink="/admin/agents" routerLinkActive="active">
-              Agents <span class="ms-auto"><i class="bi bi-person-badge"></i></span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link text-white d-flex justify-content-between align-items-center" routerLink="/admin/notifications" routerLinkActive="active">
-              Notifications <span class="ms-auto"><i class="bi bi-bell"></i></span>
-            </a>
-          </li>
+          <li class="nav-item"><a class="nav-link text-white" routerLink="/admin/dashboard" routerLinkActive="active">Dashboard <i class="bi bi-speedometer2 ms-2"></i></a></li>
+          <li class="nav-item"><a class="nav-link text-white" routerLink="/admin/policies" routerLinkActive="active">Policies <i class="bi bi-file-earmark-text ms-2"></i></a></li>
+          <li class="nav-item"><a class="nav-link text-white" routerLink="/admin/customers" routerLinkActive="active">Customers <i class="bi bi-people ms-2"></i></a></li>
+          <li class="nav-item"><a class="nav-link text-white" routerLink="/admin/agents" routerLinkActive="active">Agents <i class="bi bi-person-badge ms-2"></i></a></li>
+          <li class="nav-item"><a class="nav-link text-white" routerLink="/admin/notifications" routerLinkActive="active">Notifications <i class="bi bi-bell ms-2"></i></a></li>
         </ul>
       </div>
       <div>
-        <a class="nav-link text-danger fw-bold d-flex justify-content-between align-items-center" routerLink="/logout">
-          Logout <span class="ms-auto"><i class="bi bi-box-arrow-right"></i></span>
-        </a>
+        <a class="nav-link text-danger fw-bold" routerLink="/logout">Logout <i class="bi bi-box-arrow-right ms-2"></i></a>
       </div>
     </nav>
 
-    <!-- Toggle button for mobile -->
-    <button class="btn btn-dark d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu">
-      ☰ Menu
-    </button>
+    <!-- Offcanvas Sidebar (mobile only) -->
+    <div class="offcanvas offcanvas-start bg-dark text-white" tabindex="-1" id="sidebarMenu">
+      <div class="offcanvas-header">
+        <h4 class="mb-0">IPMS</h4>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+      </div>
+      <div class="offcanvas-body d-flex flex-column justify-content-between">
+        <ul class="nav flex-column">
+          <li class="nav-item"><a class="nav-link text-white" routerLink="/admin/dashboard" routerLinkActive="active">Dashboard <i class="bi bi-speedometer2 ms-2"></i></a></li>
+          <li class="nav-item"><a class="nav-link text-white" routerLink="/admin/policies" routerLinkActive="active">Policies <i class="bi bi-file-earmark-text ms-2"></i></a></li>
+          <li class="nav-item"><a class="nav-link text-white" routerLink="/admin/customers" routerLinkActive="active">Customers <i class="bi bi-people ms-2"></i></a></li>
+          <li class="nav-item"><a class="nav-link text-white" routerLink="/admin/agents" routerLinkActive="active">Agents <i class="bi bi-person-badge ms-2"></i></a></li>
+          <li class="nav-item"><a class="nav-link text-white" routerLink="/admin/notifications" routerLinkActive="active">Notifications <i class="bi bi-bell ms-2"></i></a></li>
+        </ul>
+        <a class="nav-link text-danger fw-bold" routerLink="/logout">Logout <i class="bi bi-box-arrow-right ms-2"></i></a>
+      </div>
+    </div>
 
     <!-- Main Content -->
-    <main class="col bg-light p-0 overflow-auto">
-      <!-- Header -->
-      <header class="d-flex justify-content-between align-items-center bg-white border-bottom p-3">
-        <!-- Breadcrumb -->
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb mb-0">
-            @for (crumb of breadcrumbs; track crumb.url; let last = $last) {
-              <li class="breadcrumb-item" [class.active]="last">
-                @if (!last) {
-                  <a [routerLink]="crumb.url">{{ crumb.label }}</a>
-                } @else {
-                  <span>{{ crumb.label }}</span>
-                }
-            </li>
-            }
-            </ol>
-        </nav>
-
-        <!-- Right side -->
-        <div class="d-flex align-items-center">
-            <!-- Notification bell -->
-            <p-button
-              icon="pi pi-bell"
-              [badge]="notificationCount.toString()"
-              badgeSeverity="danger"
-              [rounded]="true"
-              [text]="true"
-              ariaLabel="Notifications"
-              styleClass="notification-button me-3">
-            </p-button>
-
-            <!-- Profile -->
-            <div class="d-flex align-items-center">
-            <p-avatar icon="pi pi-user" shape="circle" ariaLabel="Admin profile" class="me-2"></p-avatar>
-            <span class="fw-bold">Admin</span>
-            </div>
-        </div>
-        </header>
-
-      <!-- Routed content -->
-      <div class="p-4">
-        <router-outlet></router-outlet>
-      </div>
+    <main class="col bg-light p-4 overflow-auto">
+      <router-outlet></router-outlet>
     </main>
   </div>
 </div>
