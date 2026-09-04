@@ -55,7 +55,12 @@
         </ul>
       </div>
       <div>
-        <a class="nav-link text-danger fw-bold" routerLink="/logout">Logout <i class="bi bi-box-arrow-right ms-2"></i></a>
+        <p-button 
+          label="Logout" 
+          icon="pi pi-sign-out" 
+          styleClass="p-button-danger w-100 text-start fw-bold" 
+          (onClick)="logout()">
+        </p-button>
       </div>
     </nav>
 
@@ -73,7 +78,7 @@
           <li class="nav-item"><a class="nav-link text-white" routerLink="/admin/agents" routerLinkActive="active">Agents <i class="bi bi-person-badge ms-2"></i></a></li>
           <li class="nav-item"><a class="nav-link text-white" routerLink="/admin/notifications" routerLinkActive="active">Notifications <i class="bi bi-bell ms-2"></i></a></li>
         </ul>
-        <a class="nav-link text-danger fw-bold" routerLink="/logout">Logout <i class="bi bi-box-arrow-right ms-2"></i></a>
+        <a class="nav-link text-danger fw-bold" (click)="logout()">Logout <i class="bi bi-box-arrow-right ms-2"></i></a>
       </div>
     </div>
 

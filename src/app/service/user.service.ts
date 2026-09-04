@@ -2,6 +2,7 @@ import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/htt
 import { Injectable } from '@angular/core';
 import { catchError, Observable, tap, throwError } from 'rxjs';
 import { User } from '../interface/user';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +17,7 @@ export class UserService {
       `${this.server}/auth/login`, { email, password }
     ).pipe(
         tap(user => {
-          localStorage.setItem('accessToken', user.accessToken);
+          localStorage.setItem('jwt', user.accessToken);
           localStorage.setItem('refreshToken', user.refreshToken);
         }),
         catchError(this.handleError)
@@ -36,5 +37,13 @@ export class UserService {
     }
 
     return throwError(() => errorMessage);
+  }
+
+  getCurrentUser() {
+    const token = localStorage.getItem('jwt');
+    if (!token) return null;
+
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return { role: payload.role, username: payload.sub };
   }
 }

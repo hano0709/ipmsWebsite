@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { UserService } from '../../service/user.service';
 import { FormsModule, NgForm } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -14,7 +15,7 @@ export class Login {
   showPassword = false;
   errorMessage = '';
 
-  constructor(private userService: UserService) {}
+  constructor(private userService: UserService, private router: Router) {}
 
   togglePassword(){
     this.showPassword = !this.showPassword;
@@ -25,7 +26,9 @@ export class Login {
   onLogin() {
     this.userService.login(this.email, this.password).subscribe({
       next: (response) => {
-        console.log('Login Success:', response);
+        if(response.role === "ADMIN"){
+          this.router.navigate(['/admin']);
+        }
       },
       error: (err) => {
         this.errorMessage = err;

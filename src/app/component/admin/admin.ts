@@ -1,8 +1,10 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, NavigationEnd, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { Avatar } from 'primeng/avatar';
 import { Button } from 'primeng/button';
 import { filter } from 'rxjs/operators';
+import { User } from '../../interface/user';
 
 @Component({
   selector: 'app-admin',
@@ -21,9 +23,11 @@ export class Admin implements OnInit {
   breadcrumbs: { label: string, url: string }[] = [
     { label: 'Home', url: '/admin' }   // ✅ initialize with Home
   ];
-  notificationCount = 3;
 
-  constructor(private router: Router, private route: ActivatedRoute) {}
+  notificationCount = 3;
+  private readonly server: string = 'http://localhost:8080/api/v1';
+
+  constructor(private router: Router, private route: ActivatedRoute, private http: HttpClient) {}
 
   ngOnInit(): void {
     this.router.events
@@ -49,5 +53,28 @@ export class Admin implements OnInit {
 
         this.breadcrumbs = crumbs;
       });
+  }
+
+  logout(): void {
+    const refreshToken = localStorage.getItem('refreshToken');
+    if(refreshToken) {
+      this.http.post(`${this.server}/auth/logout`, {refreshToken})
+        .subscribe({
+          next: () => {
+            this.clearTokensAndRedirect();
+          },
+          error: () => {
+            this.clearTokensAndRedirect();
+          } 
+        });
+    } else {
+      this.clearTokensAndRedirect();
+    }
+  }
+
+  clearTokensAndRedirect(): void {
+    localStorage.removeItem('jwt');
+    localStorage.removeItem('refreshToken');
+    this.router.navigate(['/login']);
   }
 }

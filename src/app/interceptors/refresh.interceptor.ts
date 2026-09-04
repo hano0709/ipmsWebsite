@@ -14,7 +14,7 @@ export const RefreshInterceptor: HttpInterceptorFn = (req, next) => {
           return http.post<any>('http://localhost:8080/api/v1/auth/refresh', { refreshToken })
             .pipe(
               switchMap(res => {
-                localStorage.setItem('accessToken', res.accessToken);
+                localStorage.setItem('jwt', res.accessToken);
                 const cloned = req.clone({ setHeaders: { Authorization: `Bearer ${res.accessToken}` } });
                 return next(cloned);
               })
