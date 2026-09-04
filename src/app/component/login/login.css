@@ -1,0 +1,13 @@
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  border-radius: 8px;
+}
+
+.vh-100 {
+  height: 100vh;
+}
+
+.invalid-feedback {
+  display: none; /* Angular will toggle this with validation */
+}

@@ -1,0 +1,54 @@
+<div class="d-flex justify-content-center align-items-center vh-100 bg-light">
+  <div class="card shadow-sm login-card">
+    <div class="card-body">
+      <h4 class="card-title text-center mb-4">Sign In</h4>
+
+      <form (ngSubmit)="onLogin()" #loginForm="ngForm">
+      <!-- Email -->
+      <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input
+          type="email"
+          id="email"
+          class="form-control"
+          placeholder="Enter email"
+          required
+          [(ngModel)]="email"
+          name="email"
+        >
+        <div class="invalid-feedback">Invalid email address</div>
+      </div>
+
+      <!-- Password -->
+      <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <div class="input-group">
+          <input
+            type="password"
+            id="password"
+            class="form-control"
+            placeholder="Enter password"
+            required
+            [(ngModel)]="password"
+            name="password"
+          >
+          <button class="btn btn-outline-secondary" type="button" (click)="togglePassword()">
+            {{ showPassword ? 'Hide' : 'Show' }}
+          </button>
+        </div>
+        <div class="invalid-feedback">Invalid password or account locked</div>
+      </div>
+
+      <!-- CTA -->
+      <div class="d-grid mb-3">
+        <button class="btn btn-primary" type="submit">Sign In</button>
+      </div>
+    </form>
+
+      <!-- Forgot password -->
+      <div class="text-center">
+        <a href="#" class="text-muted">Forgot password?</a>
+      </div>
+    </div>
+  </div>
+</div>
