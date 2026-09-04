@@ -10,15 +10,10 @@
       <!-- Breadcrumb -->
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb mb-0">
-          @for (crumb of breadcrumbs; track crumb.url; let last = $last) {
-            <li class="breadcrumb-item" [class.active]="last">
-              @if (!last) {
-                <a [routerLink]="crumb.url">{{ crumb.label }}</a>
-              } @else {
-                <span>{{ crumb.label }}</span>
-              }
-            </li>
-          }
+          <li *ngFor="let crumb of breadcrumbs; let last = last" class="breadcrumb-item" [class.active]="last">
+            <a *ngIf="!last" [routerLink]="crumb.url">{{ crumb.label }}</a>
+            <span *ngIf="last">{{ crumb.label }}</span>
+          </li>
         </ol>
       </nav>
     </div>
@@ -84,6 +79,40 @@
 
     <!-- Main Content -->
     <main class="col bg-light p-4 overflow-auto">
+      <div class="row mb-4">
+        <div class="col-md-3 d-flex">
+          <div class="card text-center h-100 flex-fill">
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title">Total Policies</h5>
+              <p class="card-text fs-4 fw-bold mt-auto">{{ totalPolicies }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 d-flex">
+          <div class="card text-center h-100 flex-fill">
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title">Active Policies</h5>
+              <p class="card-text fs-4 fw-bold mt-auto">{{ activePolicies }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 d-flex">
+          <div class="card text-center h-100 flex-fill">
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title">Expiring Soon (30 days)</h5>
+              <p class="card-text fs-4 fw-bold mt-auto">{{ expiringSoon }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 d-flex">
+          <div class="card text-center h-100 flex-fill">
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title">Total Customers</h5>
+              <p class="card-text fs-4 fw-bold mt-auto">{{ totalCustomers }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
       <router-outlet></router-outlet>
     </main>
   </div>
