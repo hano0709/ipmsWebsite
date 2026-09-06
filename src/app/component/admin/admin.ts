@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { Router, ActivatedRoute, NavigationEnd, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { Avatar } from 'primeng/avatar';
 import { Button } from 'primeng/button';
@@ -25,10 +25,10 @@ export class Admin implements OnInit {
     { label: 'Home', url: '/admin' }   // ✅ initialize with Home
   ];
 
-  totalPolicies = 0;
-  activePolicies = 0;
-  expiringSoon = 0;
-  totalCustomers = 0;
+  totalPolicies = signal(0);
+  activePolicies = signal(0);
+  expiringSoon = signal(0);
+  totalCustomers = signal(0);
 
   notificationCount = 3;
   private readonly server: string = 'http://localhost:8080/api/v1';
@@ -46,8 +46,8 @@ export class Admin implements OnInit {
     this.http.get<any[]>(`${this.server}/policies`).subscribe({
       next: (policies) => {
         // policies is already an array
-        this.totalPolicies = policies.length;
-        this.activePolicies = policies.filter(p => p.policyStatus === 'ACTIVE').length;
+        this.totalPolicies.set(policies.length);
+        this.activePolicies.set(policies.filter(p => p.policyStatus === 'ACTIVE').length);
 
         console.log('policies array', policies);
         console.log('total policies', this.totalPolicies);
@@ -61,7 +61,7 @@ export class Admin implements OnInit {
     this.http.get<any[]>(`${this.server}/policies/expiring-soon`).subscribe({
       next: (policies) => {
         // also an array
-        this.expiringSoon = policies.length;
+        this.expiringSoon.set(policies.length);
         console.log('expiring-soon', this.expiringSoon);
       },
       error: (err) => console.error('Failed to load expiring policies', err)
@@ -72,7 +72,7 @@ export class Admin implements OnInit {
     this.http.get<any[]>(`${this.server}/customers?page=0&size=10`).subscribe({
       next: (customers) => {
         // customers is an array of customer objects
-        this.totalCustomers = customers.length;
+        this.totalCustomers.set(customers.length);
         console.log('total customers', this.totalCustomers);
       },
       error: (err) => console.error('Failed to load customers', err)
