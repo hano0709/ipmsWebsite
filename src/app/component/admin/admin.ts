@@ -49,8 +49,9 @@ export class Admin implements OnInit {
         this.totalPolicies = policies.length;
         this.activePolicies = policies.filter(p => p.policyStatus === 'ACTIVE').length;
 
-        console.log(this.totalPolicies);
-        console.log(this.activePolicies);
+        console.log('policies array', policies);
+        console.log('total policies', this.totalPolicies);
+        console.log('active policies', this.activePolicies);
       },
       error: (err) => console.error('Failed to load policies', err)
     });
@@ -61,7 +62,7 @@ export class Admin implements OnInit {
       next: (policies) => {
         // also an array
         this.expiringSoon = policies.length;
-        console.log(this.expiringSoon);
+        console.log('expiring-soon', this.expiringSoon);
       },
       error: (err) => console.error('Failed to load expiring policies', err)
     });
@@ -72,7 +73,7 @@ export class Admin implements OnInit {
       next: (customers) => {
         // customers is an array of customer objects
         this.totalCustomers = customers.length;
-        console.log(this.totalCustomers);
+        console.log('total customers', this.totalCustomers);
       },
       error: (err) => console.error('Failed to load customers', err)
     });
