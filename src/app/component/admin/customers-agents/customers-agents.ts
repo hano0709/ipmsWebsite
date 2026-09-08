@@ -3,14 +3,15 @@ import { HttpClient } from '@angular/common/http';
 import { Customer } from '../../../interface/customer';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { single } from 'rxjs';
+import { DialogModule } from 'primeng/dialog';
 
 @Component({
   selector: 'app-customers-agents',
   standalone: true,                                   // <-- mark as standalone
   imports: [
     CommonModule,
-    FormsModule
+    FormsModule,
+    DialogModule
   ],
   templateUrl: './customers-agents.html',
   styleUrl: './customers-agents.css',
@@ -20,12 +21,16 @@ export class CustomersAgentsComponent implements OnInit {
   private readonly server: string = 'http://localhost:8080/api/v1';
 
   customers = signal<Customer[]>([]);
+  selectedCustomer: Customer | null = null;
   searchName = '';
   filterStatus = '';
   filterKyc = '';
   currentPage = signal(0);
   pageSize = 10;
   hasNextPage = signal(true);
+  displayDialog = false;
+  editDialog = false;
+  editedFields: Partial<Customer> = {}
 
   constructor(private http: HttpClient) {}
 
@@ -77,13 +82,57 @@ export class CustomersAgentsComponent implements OnInit {
   }
 
   viewCustomer(customer: Customer): void {
-    console.log('View customer', customer);
-    // TODO: navigate to detail page
+    this.selectedCustomer = customer;
+    this.displayDialog = true;
+  }
+
+  closeDialog(): void{
+    this.displayDialog = false;
+    this.selectedCustomer = null;
   }
 
   editCustomer(customer: Customer): void {
-    console.log('Edit customer', customer);
-    // TODO: navigate to edit form
+    this.selectedCustomer = {...customer};
+    this.editedFields = {};
+    this.editDialog = true;
+  }
+
+  closeEditDialog():void {
+    this.editDialog = false;
+    this.selectedCustomer = null;
+    this.editedFields = {};
+  }
+
+  onFieldChange(field: keyof Customer, value: string): void {
+    if(!this.selectedCustomer) return;
+
+    if((this.selectedCustomer as any)[field] !== value){
+      this.editedFields[field] = value as any;
+    } else {
+      delete this.editedFields[field];
+    }
+  }
+
+  saveCustomer(): void{
+    if(!this.selectedCustomer) return;
+
+    const payload: any = {customerCode: this.selectedCustomer.customerCode};
+
+    for(const key of Object.keys(this.editedFields)){
+      payload[key] = (this.editedFields as any)[key];
+    }
+
+    this.http.put(`${this.server}/customers`, payload).subscribe ({
+      next: () => {
+        this.closeDialog();
+        this.loadCustomers(this.currentPage());
+      },
+      error: (err) => console.error('Update failed', err)
+    });
+  }
+
+  get hasEditedFields(): boolean {
+    return Object.keys(this.editedFields).length > 0;
   }
 
   toggleKycStatus(customer: Customer): void {
