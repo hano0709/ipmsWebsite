@@ -5,6 +5,8 @@ import { Router, ActivatedRoute, NavigationEnd, RouterLink, RouterLinkActive, Ro
 import { Avatar } from 'primeng/avatar';
 import { Button } from 'primeng/button';
 import { filter } from 'rxjs/operators';
+import { Policy } from '../../interface/policy';
+import { Customer } from '../../interface/customer';
 
 @Component({
   selector: 'app-admin',
@@ -43,37 +45,31 @@ export class Admin implements OnInit {
   }
 
   private loadPolicyData(): void {
-    this.http.get<any[]>(`${this.server}/policies`).subscribe({
+    this.http.get<Policy[]>(`${this.server}/policies`).subscribe({
       next: (policies) => {
         // policies is already an array
         this.totalPolicies.set(policies.length);
         this.activePolicies.set(policies.filter(p => p.policyStatus === 'ACTIVE').length);
-
-        console.log('policies array', policies);
-        console.log('total policies', this.totalPolicies);
-        console.log('active policies', this.activePolicies);
       },
       error: (err) => console.error('Failed to load policies', err)
     });
   }
 
   private loadExpiringSoon(): void {
-    this.http.get<any[]>(`${this.server}/policies/expiring-soon`).subscribe({
+    this.http.get<Policy[]>(`${this.server}/policies/expiring-soon`).subscribe({
       next: (policies) => {
         // also an array
         this.expiringSoon.set(policies.length);
-        console.log('expiring-soon', this.expiringSoon);
       },
       error: (err) => console.error('Failed to load expiring policies', err)
     });
   }
 
   private loadCustomers(): void {
-    this.http.get<any[]>(`${this.server}/customers?page=0&size=10`).subscribe({
+    this.http.get<Customer[]>(`${this.server}/customers?page=0&size=10`).subscribe({
       next: (customers) => {
         // customers is an array of customer objects
         this.totalCustomers.set(customers.length);
-        console.log('total customers', this.totalCustomers);
       },
       error: (err) => console.error('Failed to load customers', err)
     });
