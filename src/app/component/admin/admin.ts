@@ -7,6 +7,7 @@ import { Button } from 'primeng/button';
 import { filter } from 'rxjs/operators';
 import { Policy } from '../../interface/policy';
 import { Customer } from '../../interface/customer';
+import { PolicyAuditLogDTO } from '../../interface/policyAuditLogDTO';
 
 @Component({
   selector: 'app-admin',
@@ -31,6 +32,7 @@ export class Admin implements OnInit {
   activePolicies = signal(0);
   expiringSoon = signal(0);
   totalCustomers = signal(0);
+  recentChanges = signal<PolicyAuditLogDTO[]>([]);
 
   notificationCount = 3;
   private readonly server: string = 'http://localhost:8080/api/v1';
@@ -42,6 +44,7 @@ export class Admin implements OnInit {
     this.loadPolicyData();
     this.loadExpiringSoon();
     this.loadCustomers();
+    this.loadRecentChanges();
   }
 
   private loadPolicyData(): void {
@@ -72,6 +75,15 @@ export class Admin implements OnInit {
         this.totalCustomers.set(customers.length);
       },
       error: (err) => console.error('Failed to load customers', err)
+    });
+  }
+
+  private loadRecentChanges(): void {
+    this.http.get<PolicyAuditLogDTO[]>(`${this.server}/policies/state-changes`).subscribe ({
+      next: (changes) => {
+        this.recentChanges.set(changes);
+      },
+      error: (err) => console.error('Failed to load recent changes', err)
     });
   }
 
