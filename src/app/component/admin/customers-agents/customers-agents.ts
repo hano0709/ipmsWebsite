@@ -39,15 +39,25 @@ export class CustomersAgentsComponent implements OnInit {
   }
 
   private loadCustomers(page: number = 0): void {
-    this.http.get<Customer[]>(`${this.server}/customers?page=${page}&size=${this.pageSize}`).subscribe({
+    let url = `${this.server}/customers?page=${page}&size=${this.pageSize}`;
+    if(this.filterKyc) {
+      url += `&kycStatus=${this.filterKyc}`;
+    }
+
+    this.http.get<Customer[]>(url).subscribe({
       next: (data) => {
         this.currentPage.set(page);
         this.customers.set(data);
-
         this.hasNextPage.set(data.length === this.pageSize);
       },
       error: (err) => console.error('Failed to load customers', err)
     });
+  }
+
+  onFilterChange(value: string): void {
+    this.filterKyc = value;
+    this.currentPage.set(0);
+    this.loadCustomers(0);
   }
 
   nextPage() : void {

@@ -10,7 +10,7 @@
         <input type="text" class="form-control" placeholder="Search by name..." [(ngModel)]="searchName">
       </div>
       <div class="col-md-4">
-        <select class="form-select" [(ngModel)]="filterKyc">
+        <select class="form-select" [(ngModel)]="filterKyc" (ngModelChange)="onFilterChange($event)">
           <option value="">Filter by KYC</option>
           <option value="PENDING">Pending</option>
           <option value="VERIFIED">Verified</option>
