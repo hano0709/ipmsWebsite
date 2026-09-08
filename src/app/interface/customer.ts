@@ -1,9 +1,7 @@
-import { User } from "./user";
-
 export interface Customer {
     id: number;
     customerCode: string;
-    user: User;
+    user: number;
     fullName: string;
     dateOfBirth: string;
     gender: string;

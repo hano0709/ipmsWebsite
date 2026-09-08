@@ -24,15 +24,7 @@ import { PolicyAuditLogDTO } from '../../interface/policyAuditLogDTO';
   ]
 })
 export class Admin implements OnInit {
-  breadcrumbs: { label: string, url: string }[] = [
-    { label: 'Home', url: '/admin' }   // ✅ initialize with Home
-  ];
-
-  totalPolicies = signal(0);
-  activePolicies = signal(0);
-  expiringSoon = signal(0);
-  totalCustomers = signal(0);
-  recentChanges = signal<PolicyAuditLogDTO[]>([]);
+  breadcrumbs: { label: string, url: string }[] = [];
 
   notificationCount = 3;
   private readonly server: string = 'http://localhost:8080/api/v1';
@@ -41,59 +33,13 @@ export class Admin implements OnInit {
 
   ngOnInit(): void {
     this.setupBreadcrumbs();
-    this.loadPolicyData();
-    this.loadExpiringSoon();
-    this.loadCustomers();
-    this.loadRecentChanges();
-  }
-
-  private loadPolicyData(): void {
-    this.http.get<Policy[]>(`${this.server}/policies`).subscribe({
-      next: (policies) => {
-        // policies is already an array
-        this.totalPolicies.set(policies.length);
-        this.activePolicies.set(policies.filter(p => p.policyStatus === 'ACTIVE').length);
-      },
-      error: (err) => console.error('Failed to load policies', err)
-    });
-  }
-
-  private loadExpiringSoon(): void {
-    this.http.get<Policy[]>(`${this.server}/policies/expiring-soon`).subscribe({
-      next: (policies) => {
-        // also an array
-        this.expiringSoon.set(policies.length);
-      },
-      error: (err) => console.error('Failed to load expiring policies', err)
-    });
-  }
-
-  private loadCustomers(): void {
-    this.http.get<Customer[]>(`${this.server}/customers?page=0&size=10`).subscribe({
-      next: (customers) => {
-        // customers is an array of customer objects
-        this.totalCustomers.set(customers.length);
-      },
-      error: (err) => console.error('Failed to load customers', err)
-    });
-  }
-
-  private loadRecentChanges(): void {
-    this.http.get<PolicyAuditLogDTO[]>(`${this.server}/policies/state-changes`).subscribe ({
-      next: (changes) => {
-        this.recentChanges.set(changes);
-      },
-      error: (err) => console.error('Failed to load recent changes', err)
-    });
   }
 
   private setupBreadcrumbs(): void{
     this.router.events
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
       .subscribe(() => {
-        const crumbs: { label: string, url: string }[] = [
-          { label: 'Home', url: '/admin' }   // ✅ always start with Home
-        ];
+        const crumbs: { label: string, url: string }[] = [];
 
         let currentRoute = this.route.root;
         let url = '/admin';
@@ -104,7 +50,7 @@ export class Admin implements OnInit {
             url += '/' + currentRoute.snapshot.url.map((segment: any) => segment.path).join('/');
             crumbs.push({
               label: currentRoute.snapshot.data['breadcrumb'] || currentRoute.snapshot.url[0].path,
-              url
+              url: '/admin' + url
             });
           }
         }
