@@ -4,6 +4,9 @@ import { Customer } from '../../../interface/customer';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
+import { DrawerModule } from 'primeng/drawer';
+import { Agent } from '../../../interface/agent';
+import { email } from '@angular/forms/signals';
 
 @Component({
   selector: 'app-customers-agents',
@@ -11,7 +14,8 @@ import { DialogModule } from 'primeng/dialog';
   imports: [
     CommonModule,
     FormsModule,
-    DialogModule
+    DialogModule,
+    DrawerModule
   ],
   templateUrl: './customers-agents.html',
   styleUrl: './customers-agents.css',
@@ -31,6 +35,21 @@ export class CustomersAgentsComponent implements OnInit {
   displayDialog = false;
   editDialog = false;
   editedFields: Partial<Customer> = {}
+  addPanelVisible = false;
+  entityType: 'CUSTOMER' | 'AGENT' = 'CUSTOMER';
+  newCustomer: Partial<Customer> = {
+    fullName: '',
+    dateOfBirth: '',
+    gender: 'MALE',
+    phone: '',
+    address: ''
+  }
+  newAgent: Partial<Agent> = {
+    fullName: '',
+    licenseNumber: ''
+  }
+  newEmail = '';
+  newPassword = '';
 
   constructor(private http: HttpClient) {}
 
@@ -141,5 +160,62 @@ export class CustomersAgentsComponent implements OnInit {
         },
         error: (err) => console.error('Failed to update KYC status', err)
       });
+  }
+
+  openAddPanel(): void {
+    this.addPanelVisible = true;
+  }
+
+  closeAddPanel(): void {
+    this.addPanelVisible = false;
+    this.resetForms();
+  }
+
+  saveNewEntity(): void {
+    if(this.entityType === 'CUSTOMER'){
+      const payload: any = {
+        ...this.newCustomer,
+        email: this.newEmail,
+        password: this.newPassword
+      }
+
+      this.http.post(`${this.server}/customers`, payload).subscribe ({
+        next: () => {
+          this.closeAddPanel();
+          this.loadCustomers(0);
+        },
+        error: (err) => console.error('Failed to create customer', err)
+      });
+    } else {
+      const payload: any = {
+        ...this.newAgent,
+        email: this.newEmail,
+        password: this.newPassword
+      }
+
+      this.http.post(`${this.server}/agents`, payload).subscribe({
+        next: () => {
+          this.closeAddPanel();
+          this.loadCustomers(0);
+        },
+        error: (err) => console.error('Failed to create Agent')
+      });
+    }
+  }
+
+  resetForms(): void {
+    this.newCustomer = {
+      fullName: '',
+      dateOfBirth: '',
+      gender: 'MALE',
+      phone: '',
+      address: ''
+    };
+    this.newAgent = {
+      fullName: '',
+      licenseNumber: '' 
+    };
+    this.newEmail = '';
+    this.newPassword = '';
   }
 }

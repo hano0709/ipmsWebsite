@@ -7,7 +7,8 @@
     <!-- Search / Filter -->
     <div class="row mb-3">
       <div class="col-md-4">
-        <input type="text" class="form-control" placeholder="Search by name..." [(ngModel)]="searchName" (ngModelChange)="loadCustomers(0)">
+        <input type="text" class="form-control" placeholder="Search by name..." [(ngModel)]="searchName"
+          (ngModelChange)="loadCustomers(0)">
       </div>
       <div class="col-md-4">
         <select class="form-select" [(ngModel)]="filterKyc" (ngModelChange)="loadCustomers(0)">
@@ -17,6 +18,12 @@
           <option value="REJECTED">Rejected</option>
         </select>
       </div>
+    </div>
+
+    <div class="d-flex justify-content-end mb-3">
+      <button class="btn btn-success" (click)="openAddPanel()">
+        + Add New
+      </button>
     </div>
 
     <!-- Table -->
@@ -129,6 +136,85 @@
 
       </tbody>
     </table>
+
+    <!-- Drawer -->
+    <p-drawer [(visible)]="addPanelVisible" position="right" [modal]="true" [style]="{width:'400px'}"
+      (onHide)="closeAddPanel()">
+      <h5 class="mb-3">Add New {{ entityType === 'CUSTOMER' ? 'Customer' : 'Agent' }}</h5>
+
+      <!-- Entity type selector -->
+      <div class="mb-3">
+        <label class="form-label">Entity Type</label>
+        <select class="form-select" [(ngModel)]="entityType">
+          <option value="CUSTOMER">Customer</option>
+          <option value="AGENT">Agent</option>
+        </select>
+      </div>
+
+      <!-- Customer form -->
+      <div *ngIf="entityType === 'CUSTOMER'">
+        <div class="mb-3">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-control" [(ngModel)]="newEmail">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-control" [(ngModel)]="newPassword">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Full Name</label>
+          <input type="text" class="form-control" [(ngModel)]="newCustomer.fullName">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Date of Birth</label>
+          <input type="date" class="form-control" [(ngModel)]="newCustomer.dateOfBirth">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Gender</label>
+          <select class="form-select" [(ngModel)]="newCustomer.gender">
+            <option value="MALE">Male</option>
+            <option value="FEMALE">Female</option>
+            <option value="OTHER">Other</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Phone</label>
+          <input type="text" class="form-control" [(ngModel)]="newCustomer.phone">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Address</label>
+          <input type="text" class="form-control" [(ngModel)]="newCustomer.address">
+        </div>
+      </div>
+
+      <!-- Agent form -->
+      <div *ngIf="entityType === 'AGENT'">
+        <div class="mb-3">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-control" [(ngModel)]="newEmail">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-control" [(ngModel)]="newPassword">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Full Name</label>
+          <input type="text" class="form-control" [(ngModel)]="newAgent.fullName">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">License Number</label>
+          <input type="text" class="form-control" [(ngModel)]="newAgent.licenseNumber">
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="d-flex justify-content-end">
+        <button class="btn btn-secondary me-2" (click)="closeAddPanel()">Cancel</button>
+        <button class="btn btn-primary" (click)="saveNewEntity()">Save</button>
+      </div>
+    </p-drawer>
+
+
     <div class="d-flex justify-content-between align-items-center mt-3">
       <button class="btn btn-outline-secondary" (click)="prevPage()" [disabled]="currentPage() === 0">
         ← Previous
