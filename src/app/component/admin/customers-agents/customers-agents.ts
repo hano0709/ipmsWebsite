@@ -128,11 +128,17 @@ export class CustomersAgentsComponent implements OnInit {
 
     // Optimistic update on frontend
     customer.kycStatus = newStatus;
+    const payload: any = {
+      customerCode: customer.customerCode,
+      kycStatus: customer.kycStatus
+    }
 
     // Call backend to persist change
-    this.http.put(`${this.server}/customers/${customer.id}/kyc-status`, { kycStatus: newStatus })
+    this.http.put(`${this.server}/customers`, payload)
       .subscribe({
-        next: () => console.log(`Customer ${customer.id} KYC updated to ${newStatus}`),
+        next: () => {
+          this.loadCustomers(this.currentPage());
+        },
         error: (err) => console.error('Failed to update KYC status', err)
       });
   }
