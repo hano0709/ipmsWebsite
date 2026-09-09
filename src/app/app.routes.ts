@@ -13,7 +13,7 @@ export const routes: Routes = [
         data: { breadcrumb: 'Admin' },
         children: [
           { path: 'dashboard', loadComponent: () => import('./component/admin/dashboard/dashboard').then(m => m.Dashboard), data: { breadcrumb: 'Dashboard' } },
-        //   { path: 'policies', loadComponent: () => import('./component/policies/policies').then(m => m.Policies), data: { breadcrumb: 'Policies' } },
+          { path: 'policies', loadComponent: () => import('./component/admin/policies-list/policies-list').then(m => m.PoliciesList), data: { breadcrumb: 'Policies' } },
           { path: 'customers-agents', loadComponent: () => import('./component/admin/customers-agents/customers-agents').then(m => m.CustomersAgentsComponent), data: { breadcrumb: 'Customers & Agents Management' } },
         //   { path: 'notifications', loadComponent: () => import('./component/notifications/notifications').then(m => m.Notifications), data: { breadcrumb: 'Notifications' } }
           { path: 'customers/add', loadComponent: () => import('./component/admin/customers-agents/customers-agents').then(m => m.CustomersAgentsComponent), data: { breadcrumb: 'Customer & Agents Management'}},

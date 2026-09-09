@@ -1,0 +1,9 @@
+.badge {
+  font-size: 0.85rem;
+  padding: 0.4em 0.6em;
+}
+
+.actions button {
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
