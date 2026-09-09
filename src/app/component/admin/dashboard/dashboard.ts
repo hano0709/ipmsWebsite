@@ -32,7 +32,7 @@ export class Dashboard implements OnInit {
   ngOnInit(): void {
     this.loadPolicyData();
     this.loadExpiringSoon();
-    this.loadCustomers();
+    this.loadCustomerCount();
     this.loadRecentChanges();
   }
 
@@ -53,10 +53,10 @@ export class Dashboard implements OnInit {
     });
   }
 
-  private loadCustomers(): void {
-    this.http.get<Customer[]>(`${this.server}/customers?page=0&size=10`).subscribe({
-      next: (customers) => this.totalCustomers.set(customers.length),
-      error: (err) => console.error('Failed to load customers', err)
+  private loadCustomerCount(): void {
+    this.http.get<{ Count: number }>(`${this.server}/customers/count`).subscribe({
+      next: (res) => this.totalCustomers.set(res.Count),
+      error: (err) => console.error('Failed to load customer count', err)
     });
   }
 

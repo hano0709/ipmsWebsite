@@ -38,10 +38,13 @@ export class CustomersAgentsComponent implements OnInit {
     this.loadCustomers();
   }
 
-  private loadCustomers(page: number = 0): void {
+  loadCustomers(page: number = 0): void {
     let url = `${this.server}/customers?page=${page}&size=${this.pageSize}`;
     if(this.filterKyc) {
       url += `&kycStatus=${this.filterKyc}`;
+    }
+    if(this.searchName) {
+      url += `&searchName=${this.searchName}`;
     }
 
     this.http.get<Customer[]>(url).subscribe({
@@ -54,12 +57,6 @@ export class CustomersAgentsComponent implements OnInit {
     });
   }
 
-  onFilterChange(value: string): void {
-    this.filterKyc = value;
-    this.currentPage.set(0);
-    this.loadCustomers(0);
-  }
-
   nextPage() : void {
     if(this.hasNextPage()){
       this.loadCustomers(this.currentPage() + 1);
@@ -70,25 +67,6 @@ export class CustomersAgentsComponent implements OnInit {
     if(this.currentPage() > 0){
       this.loadCustomers(this.currentPage() - 1);
     }
-  }
-
-  get filteredCustomers(): Customer[] {
-    return this.customers().filter(c => {
-      const matchesName = this.searchName
-        ? c.fullName.toLowerCase().includes(this.searchName.toLowerCase())
-        : true;
-
-      const matchesStatus = this.filterStatus
-        ? (this.filterStatus === 'ACTIVE' && c.kycStatus === 'VERIFIED') ||
-          (this.filterStatus === 'INACTIVE' && c.kycStatus === 'REJECTED')
-        : true;
-
-      const matchesKyc = this.filterKyc
-        ? c.kycStatus === this.filterKyc
-        : true;
-
-      return matchesName && matchesStatus && matchesKyc;
-    });
   }
 
   viewCustomer(customer: Customer): void {

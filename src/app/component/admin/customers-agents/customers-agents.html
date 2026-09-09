@@ -7,10 +7,10 @@
     <!-- Search / Filter -->
     <div class="row mb-3">
       <div class="col-md-4">
-        <input type="text" class="form-control" placeholder="Search by name..." [(ngModel)]="searchName">
+        <input type="text" class="form-control" placeholder="Search by name..." [(ngModel)]="searchName" (ngModelChange)="loadCustomers(0)">
       </div>
       <div class="col-md-4">
-        <select class="form-select" [(ngModel)]="filterKyc" (ngModelChange)="onFilterChange($event)">
+        <select class="form-select" [(ngModel)]="filterKyc" (ngModelChange)="loadCustomers(0)">
           <option value="">Filter by KYC</option>
           <option value="PENDING">Pending</option>
           <option value="VERIFIED">Verified</option>
@@ -32,7 +32,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let customer of filteredCustomers">
+        <tr *ngFor="let customer of customers()">
           <td>{{ customer.customerCode }}</td>
           <td>{{ customer.fullName }}</td>
           <td>{{ customer.gender }}</td>
