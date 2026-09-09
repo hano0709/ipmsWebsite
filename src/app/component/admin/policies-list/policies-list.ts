@@ -3,12 +3,14 @@ import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { Policy } from '../../../interface/policy';   
 import { FormsModule } from '@angular/forms';
+import { DialogModule } from 'primeng/dialog';
 
 @Component({
   selector: 'app-policies-list',
   imports: [
     CommonModule,
-    FormsModule
+    FormsModule,
+    DialogModule
   ],
   templateUrl: './policies-list.html',
   styleUrl: './policies-list.css'
@@ -19,6 +21,10 @@ export class PoliciesList implements OnInit {
   policies = signal<Policy[]>([]);
   pageSize = signal(10);
   currentPage = signal(0);
+  viewDialogVisible = signal(false);
+  selectedPolicy = signal<Policy | null>(null);
+  editDialogVisible = signal(false);
+  editPolicyData = signal<Partial<Policy>>({});
 
   constructor(private http: HttpClient) {}
 
@@ -28,7 +34,10 @@ export class PoliciesList implements OnInit {
 
   loadPolicies(): void {
     this.http.get<Policy[]>(`${this.server}/policies`).subscribe({
-      next: (data) => this.policies.set(data),
+      next: (data) => {
+        this.policies.set(data),
+        console.log('Policies from backend:', data);
+      },
       error: (err) => console.error('Failed to load policies', err)
     });
   }
@@ -64,13 +73,45 @@ export class PoliciesList implements OnInit {
 
   // Example action handlers
   viewPolicy(policy: Policy): void {
-    console.log('Viewing policy', policy);
+    this.selectedPolicy.set(policy);
+    this.viewDialogVisible.set(true);
+  }
+
+  closeViewDialog(): void {
+    this.viewDialogVisible.set(false);
+    this.selectedPolicy.set(null);
   }
 
   editPolicy(policy: Policy): void {
     if (policy.policyStatus === 'DRAFT') {
-      console.log('Editing policy', policy);
+      this.selectedPolicy.set(policy);
+      this.editPolicyData.set({
+        policyType: policy.policyType,
+        sumInsured: policy.sumInsured,
+        startDate: policy.startDate,
+        endDate: policy.endDate,
+        description: policy.description
+      });
+      this.editDialogVisible.set(true);
     }
+  }
+
+  savePolicyEdits(): void {
+    const policyNumber = this.selectedPolicy()?.policyNumber;
+    if(!policyNumber) return;
+
+    const payload = {
+      ...this.editPolicyData(),
+      customerCode: this.selectedPolicy()?.customerCode
+    };
+
+    this.http.put(`${this.server}/policies/${policyNumber}`, payload).subscribe({
+      next: () => {
+        this.editDialogVisible.set(false);
+        this.selectedPolicy.set(null);
+        this.loadPolicies();
+      }
+    })
   }
 
   transitionStatus(policy: Policy, newStatus: string): void {

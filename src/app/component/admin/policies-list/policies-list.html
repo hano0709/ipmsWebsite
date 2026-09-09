@@ -19,8 +19,8 @@
                 <tr *ngFor="let policy of paginatedPolicies">
                     <td>{{ policy.policyNumber }}</td>
                     <td>{{ policy.policyType }}</td>
-                    <td>{{ policy.customerId }}</td>
-                    <td>{{ policy.agentId }}</td>
+                    <td>{{ policy.customerCode }}</td>
+                    <td>{{ policy.agentCode }}</td>
                     <td>{{ policy.premiumAmount | currency:'INR' }}</td>
                     <td>{{ policy.startDate | date }}</td>
                     <td>{{ policy.endDate | date }}</td>
@@ -67,9 +67,65 @@
     <div>
         <button class="btn btn-outline-secondary me-2" (click)="prevPage()"
             [disabled]="currentPage() === 0">Previous</button>
-        <button class="btn btn-outline-secondary" (click)="nextPage()"
-            [disabled]="currentPage() >= maxPage">
+        <button class="btn btn-outline-secondary" (click)="nextPage()" [disabled]="currentPage() >= maxPage">
             Next
         </button>
     </div>
+    <p-dialog header="Policy Details" [visible]="viewDialogVisible()" [modal]="true" [appendTo]="'body'"
+        [style]="{width: '600px'}" (onHide)="closeViewDialog()">
+
+        <div *ngIf="selectedPolicy() as policy">
+            <div class="mb-2"><strong>Policy Number:</strong> {{ policy.policyNumber }}</div>
+            <div class="mb-2"><strong>Type:</strong> {{ policy.policyType }}</div>
+            <div class="mb-2"><strong>Status:</strong> {{ policy.policyStatus }}</div>
+            <div class="mb-2"><strong>Customer ID:</strong> {{ policy.customerCode }}</div>
+            <div class="mb-2"><strong>Agent ID:</strong> {{ policy.agentCode }}</div>
+            <div class="mb-2"><strong>Sum Insured:</strong> {{ policy.sumInsured | currency:'INR' }}</div>
+            <div class="mb-2"><strong>Premium Amount:</strong> {{ policy.premiumAmount | currency:'INR' }}</div>
+            <div class="mb-2"><strong>Start Date:</strong> {{ policy.startDate | date }}</div>
+            <div class="mb-2"><strong>End Date:</strong> {{ policy.endDate | date }}</div>
+            <div class="mb-2"><strong>Description:</strong> {{ policy.description }}</div>
+        </div>
+    </p-dialog>
+    <p-dialog header="Edit Policy" [visible]="editDialogVisible()" [modal]="true" [appendTo]="'body'"
+        [style]="{width: '600px'}" (onHide)="editDialogVisible.set(false)">
+
+        <div *ngIf="editPolicyData() as editData">
+            <div class="mb-3">
+                <label class="form-label">Policy Type</label>
+                <select class="form-select" [(ngModel)]="editData.policyType">
+                    <option value="LIFE">LIFE</option>
+                    <option value="HEALTH">HEALTH</option>
+                    <option value="MOTOR">MOTOR</option>
+                    <option value="PROPERTY">PROPERTY</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Sum Insured</label>
+                <input type="number" class="form-control" [(ngModel)]="editData.sumInsured">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Start Date</label>
+                <input type="date" class="form-control" [(ngModel)]="editData.startDate">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">End Date</label>
+                <input type="date" class="form-control" [(ngModel)]="editData.endDate">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Description</label>
+                <textarea class="form-control" [(ngModel)]="editData.description"></textarea>
+            </div>
+
+            <div class="text-end">
+                <button class="btn btn-secondary me-2" (click)="editDialogVisible.set(false)">Cancel</button>
+                <button class="btn btn-primary" (click)="savePolicyEdits()">Save</button>
+            </div>
+        </div>
+    </p-dialog>
+
 </div>

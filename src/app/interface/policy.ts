@@ -3,8 +3,8 @@ export interface Policy {
     policyNumber: string;
     policyType: 'LIFE' | 'HEALTH' | 'MOTOR' | 'PROPERTY';
     policyStatus: 'DRAFT' | 'ACTIVE' | 'RENEWED' | 'EXPIRED' | 'SUSPENDED' | 'CANCELLED';
-    customerId: number;
-    agentId: number;
+    customerCode: string;
+    agentCode: string;
     sumInsured: number;
     premiumAmount: number;
     startDate: string;
