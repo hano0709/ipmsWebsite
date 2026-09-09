@@ -6,7 +6,6 @@ import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { DrawerModule } from 'primeng/drawer';
 import { Agent } from '../../../interface/agent';
-import { email } from '@angular/forms/signals';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
