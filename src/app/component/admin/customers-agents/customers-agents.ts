@@ -7,6 +7,7 @@ import { DialogModule } from 'primeng/dialog';
 import { DrawerModule } from 'primeng/drawer';
 import { Agent } from '../../../interface/agent';
 import { email } from '@angular/forms/signals';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-customers-agents',
@@ -51,10 +52,19 @@ export class CustomersAgentsComponent implements OnInit {
   newEmail = '';
   newPassword = '';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private route: ActivatedRoute, private router: Router) {}
 
   ngOnInit(): void {
     this.loadCustomers();
+
+    const url = this.router.url;
+    if(url.includes('/customers/add')) {
+      this.entityType = 'CUSTOMER';
+      this.openAddPanel();
+    } else if(url.includes('/agents/add')){
+      this.entityType = 'AGENT';
+      this.openAddPanel();
+    }
   }
 
   loadCustomers(page: number = 0): void {

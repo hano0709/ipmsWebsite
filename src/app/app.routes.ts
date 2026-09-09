@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { Login } from './component/login/login';
 import { Admin } from './component/admin/admin';
 import { AdminGuard } from './guards/admin-guard';
+import { CustomersAgentsComponent } from './component/admin/customers-agents/customers-agents';
 
 export const routes: Routes = [
     {path: 'login', component: Login},
@@ -15,7 +16,9 @@ export const routes: Routes = [
         //   { path: 'policies', loadComponent: () => import('./component/policies/policies').then(m => m.Policies), data: { breadcrumb: 'Policies' } },
           { path: 'customers-agents', loadComponent: () => import('./component/admin/customers-agents/customers-agents').then(m => m.CustomersAgentsComponent), data: { breadcrumb: 'Customers & Agents Management' } },
         //   { path: 'notifications', loadComponent: () => import('./component/notifications/notifications').then(m => m.Notifications), data: { breadcrumb: 'Notifications' } }
+          { path: 'customers/add', loadComponent: () => import('./component/admin/customers-agents/customers-agents').then(m => m.CustomersAgentsComponent), data: { breadcrumb: 'Customer & Agents Management'}},
+          { path: 'agents/add', loadComponent: () => import('./component/admin/customers-agents/customers-agents').then(m => m.CustomersAgentsComponent), data: { breadcrumb: 'Customer & Agents Management'}},
         ]
     },
-  { path: 'unauthorized', loadComponent: () => import('./component/unauthorized/unauthorized').then(m => m.Unauthorized) }
+  { path: 'unauthorized', loadComponent: () => import('./component/unauthorized/unauthorized').then(m => m.Unauthorized) },
 ];
