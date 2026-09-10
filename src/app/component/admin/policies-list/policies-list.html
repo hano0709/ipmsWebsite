@@ -28,6 +28,7 @@
                         <span class="badge" [ngClass]="{
                     'bg-success': policy.policyStatus === 'ACTIVE',
                     'bg-warning text-dark': policy.policyStatus === 'DRAFT',
+                    'bg-warning': policy.policyStatus === 'SUSPENDED',
                     'bg-danger': policy.policyStatus === 'CANCELLED' || policy.policyStatus === 'EXPIRED',
                     'bg-primary': policy.policyStatus === 'RENEWED'
                   }">

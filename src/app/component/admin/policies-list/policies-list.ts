@@ -35,8 +35,7 @@ export class PoliciesList implements OnInit {
   loadPolicies(): void {
     this.http.get<Policy[]>(`${this.server}/policies`).subscribe({
       next: (data) => {
-        this.policies.set(data),
-        console.log('Policies from backend:', data);
+        this.policies.set(data)
       },
       error: (err) => console.error('Failed to load policies', err)
     });
@@ -71,7 +70,7 @@ export class PoliciesList implements OnInit {
     this.currentPage.set(0);
   }
 
-  // Example action handlers
+
   viewPolicy(policy: Policy): void {
     this.selectedPolicy.set(policy);
     this.viewDialogVisible.set(true);
@@ -115,7 +114,36 @@ export class PoliciesList implements OnInit {
   }
 
   transitionStatus(policy: Policy, newStatus: string): void {
-    console.log(`Transition ${policy.policyNumber} to ${newStatus}`);
-    // TODO: call backend PUT here
+    const policyNumber = policy.policyNumber;
+
+    if(newStatus === 'ACTIVE') {
+      this.http.patch(`${this.server}/policies/${policyNumber}/activate`, {}).subscribe({
+        next: () => {
+          this.loadPolicies();
+        },
+        error: (err) => console.error("Failed to activate Policy", err)
+      });
+    } else if(newStatus === 'RENEWED') {
+        this.http.patch(`${this.server}/policies/${policyNumber}/renew`, {}).subscribe({
+          next: () => {
+            this.loadPolicies();
+          },
+          error: (err) => console.error("Failed to renew Policy", err)
+        });
+    } else if(newStatus === 'SUSPENDED') {
+        this.http.patch(`${this.server}/policies/${policyNumber}/suspend`, {}).subscribe({
+          next: () => {
+            this.loadPolicies();
+          },
+          error: (err) => console.error("Failed to suspend Policy", err)
+        });
+    } else if(newStatus === 'CANCELLED') {
+        this.http.patch(`${this.server}/policies/${policyNumber}/cancel`, {}).subscribe({
+          next: () => {
+            this.loadPolicies();
+          },
+          error: (err) => console.error("Failed to cancel Policy", err)
+        });
+    }
   }
 }
