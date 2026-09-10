@@ -26,7 +26,6 @@ export class PolicyDetails implements OnInit {
     const policyNumber = this.route.snapshot.paramMap.get('policyNumber');
     if (policyNumber) {
       this.loadPolicy(policyNumber);
-      this.loadDocuments();
       this.loadAuditTrail(policyNumber);
     }
   }
@@ -34,18 +33,21 @@ export class PolicyDetails implements OnInit {
   // Load policy details
   loadPolicy(policyNumber: string): void {
     this.http.get<Policy>(`${this.server}/policies/${policyNumber}`).subscribe({
-      next: (data) => this.policy.set(data),
+      next: (data) => {
+        this.policy.set(data);
+        this.loadDocuments(data.id);   // pass the id here
+      },
       error: (err) => console.error('Failed to load policy details', err)
     });
   }
 
   // Load documents
-  loadDocuments(): void {
-    const id = this.policy()?.id;
-    if (!id) return;
-
-    this.http.get<PolicyDocument[]>(`${this.server}/policies/${id}/documents`).subscribe({
-      next: (data) => this.documents.set(data),
+  loadDocuments(policyId: number): void {
+    this.http.get<PolicyDocument[]>(`${this.server}/policies/${policyId}/documents`).subscribe({
+      next: (data) => {
+        this.documents.set(data);
+        console.log('Documents loaded:', data);
+      },
       error: (err) => console.error('Failed to load documents', err)
     });
   }
