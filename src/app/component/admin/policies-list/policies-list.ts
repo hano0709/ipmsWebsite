@@ -25,6 +25,11 @@ export class PoliciesList implements OnInit {
   selectedPolicy = signal<Policy | null>(null);
   editDialogVisible = signal(false);
   editPolicyData = signal<Partial<Policy>>({});
+  filterPolicyType = signal<string | null>(null);
+  filterStatus = signal<string | null>(null);
+  filterStartDate = signal<string | null>(null);
+  filterEndDate = signal<string | null>(null);
+  filterSearch = signal<string>("");
 
   constructor(private http: HttpClient) {}
 
@@ -43,7 +48,7 @@ export class PoliciesList implements OnInit {
 
   get paginatedPolicies(): Policy[] {
     const start = this.currentPage() * this.pageSize();
-    return this.policies().slice(start, start + this.pageSize());
+    return this.filteredPolicies.slice(start, start + this.pageSize());
   }
 
   nextPage(): void {
@@ -145,5 +150,33 @@ export class PoliciesList implements OnInit {
           error: (err) => console.error("Failed to cancel Policy", err)
         });
     }
+  }
+
+  get filteredPolicies(): Policy[] {
+    return this.policies().filter(p => {
+      if(this.filterPolicyType() && p.policyType !== this.filterPolicyType()){
+        return false;
+      }
+
+      if (this.filterStatus() && p.policyStatus !== this.filterStatus()) {
+        return false;
+      }
+
+      const start = this.filterStartDate() ? new Date(this.filterStartDate()!) : null;
+      const end = this.filterEndDate() ? new Date(this.filterEndDate()!) : null;
+      const policyStart = new Date(p.startDate);
+      const policyEnd = new Date(p.endDate);
+      if(start && policyStart < start) return false;
+      if(end && policyEnd > end) return false;
+
+      if(this.filterSearch() &&
+        !p.policyNumber.toLowerCase().includes(this.filterSearch().toLowerCase()) &&
+        !p.policyNumber.toLowerCase().includes(this.filterSearch().toLowerCase())
+      ) {
+        return false;
+      }
+
+      return true;
+    });
   }
 }
