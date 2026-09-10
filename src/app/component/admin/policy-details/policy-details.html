@@ -19,7 +19,7 @@
                     <p><strong>Description:</strong> {{ policy()?.description }}</p>
 
                     <!-- Edit button if DRAFT -->
-                    <button *ngIf="policy()?.policyStatus === 'DRAFT'" class="btn btn-secondary">
+                    <button *ngIf="policy()?.policyStatus === 'DRAFT'" class="btn btn-secondary" (click)="editPolicy()">
                         Edit
                     </button>
                 </div>
@@ -81,8 +81,7 @@
                                     'bg-primary': entry.newStatus === 'RENEWED',
                                     'bg-warning text-dark': entry.newStatus === 'SUSPENDED',
                                     'bg-danger': entry.newStatus === 'CANCELLED'
-                                    }"
-                                >
+                                    }">
                                     {{ entry.newStatus }}
                                 </span>
                                 <strong>{{ entry.previousStatus }}</strong> → <strong>{{ entry.newStatus }}</strong><br>
@@ -90,12 +89,18 @@
                                 <small class="text-muted d-block">Created by User {{ entry.createdBy }}</small>
 
                                 <!-- Conditional timestamps -->
-                                <small *ngIf="entry.newStatus === 'DRAFT'" class="text-muted d-block">
+                                <small *ngIf="entry.newStatus === 'DRAFT' && trail[0] === entry"
+                                    class="text-muted d-block">
                                     Created at {{ entry.createdAt | date:'short' }}
+                                </small>
+                                <small *ngIf="entry.newStatus === 'DRAFT' && trail[0] !== entry"
+                                    class="text-muted d-block">
+                                    Changed at {{ entry.changedAt | date:'short' }}
                                 </small>
                                 <small *ngIf="entry.newStatus !== 'DRAFT'" class="text-muted d-block">
                                     Changed at {{ entry.changedAt | date:'short' }}
                                 </small>
+
 
                                 <small class="text-muted d-block">{{ entry.remarks }}</small>
                             </div>
@@ -104,5 +109,45 @@
                 </div>
             </div>
         </div>
+        <p-dialog header="Edit Policy" [visible]="editDialogVisible()" (onHide)="editDialogVisible.set(false)"
+            [modal]="true" [closable]="true" [style]="{width: '500px'}">
+
+            <div class="p-fluid">
+                <div class="mb-3">
+                    <label>Policy Type</label>
+                    <select class="form-select" [(ngModel)]="editPolicyModel.policyType">
+                        <option value="LIFE">LIFE</option>
+                        <option value="HEALTH">HEALTH</option>
+                        <option value="MOTOR">MOTOR</option>
+                        <option value="PROPERTY">PROPERTY</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label>Sum Insured</label>
+                    <input type="number" class="form-control" [(ngModel)]="editPolicyModel.sumInsured">
+                </div>
+
+                <div class="mb-3">
+                    <label>Start Date</label>
+                    <input type="date" class="form-control" [(ngModel)]="editPolicyModel.startDate">
+                </div>
+
+                <div class="mb-3">
+                    <label>End Date</label>
+                    <input type="date" class="form-control" [(ngModel)]="editPolicyModel.endDate">
+                </div>
+
+                <div class="mb-3">
+                    <label>Description</label>
+                    <textarea class="form-control" [(ngModel)]="editPolicyModel.description"></textarea>
+                </div>
+            </div>
+
+            <ng-template pTemplate="footer">
+                <button class="btn btn-primary me-2" (click)="savePolicyEdits()">Save</button>
+                <button class="btn btn-secondary" (click)="editDialogVisible.set(false)">Cancel</button>
+            </ng-template>
+        </p-dialog>
     </div>
 </div>
