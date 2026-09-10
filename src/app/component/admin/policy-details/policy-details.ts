@@ -117,7 +117,28 @@ export class PolicyDetails implements OnInit {
   }
 
   uploadDoc(): void {
-    // Placeholder: implement file upload dialog
-    console.log('Upload document clicked');
+    const id = this.policy()?.id;
+    if(!id) return;
+
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.pdf,.doc,.docx';
+
+    input.onchange = () => {
+      const file = (input.files && input.files[0]) || null;
+      if(!file) return;
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      this.http.post(`${this.server}/policies/${id}/documents`, formData, {responseType: 'text'}).subscribe({
+        next: () => {
+          this.loadDocuments(id);
+        },
+        error: (err) => console.error('Failed to upload Doc')
+      });
+    };
+
+    input.click();
   }
 }
