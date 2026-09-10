@@ -5,10 +5,16 @@ import { CommonModule } from '@angular/common';
 import { Policy } from '../../../interface/policy';
 import { PolicyDocument } from '../../../interface/policyDocument';
 import { PolicyAudit } from '../../../interface/policyAudit';
+import { DialogModule } from 'primeng/dialog';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-policy-details',
-  imports: [CommonModule],
+  imports: [
+    CommonModule,
+    DialogModule,
+    FormsModule
+  ],
   templateUrl: './policy-details.html',
   styleUrls: ['./policy-details.css']
 })
@@ -19,6 +25,8 @@ export class PolicyDetails implements OnInit {
   policy = signal<Policy | null>(null);
   documents = signal<PolicyDocument[]>([]);
   auditTrail = signal<PolicyAudit[]>([]);
+  editDialogVisible = signal(false);
+  editPolicyModel: Partial<Policy> = {};
 
   constructor(private route: ActivatedRoute, private http: HttpClient) {}
 
@@ -55,7 +63,15 @@ export class PolicyDetails implements OnInit {
   // Load audit trail
   loadAuditTrail(policyNumber: string): void {
     this.http.get<PolicyAudit[]>(`${this.server}/policies/${policyNumber}/audit`).subscribe({
-      next: (data) => this.auditTrail.set(data),
+      next: (data) => {
+        // sort ascending by createdAt/changedAt
+        const sorted = [...data].sort((a, b) => {
+          const dateA = new Date(a.createdAt || a.changedAt).getTime();
+          const dateB = new Date(b.createdAt || b.changedAt).getTime();
+          return dateA - dateB;
+        });
+        this.auditTrail.set(sorted);
+      },
       error: (err) => console.error('Failed to load audit trail', err)
     });
   }
@@ -140,5 +156,37 @@ export class PolicyDetails implements OnInit {
     };
 
     input.click();
+  }
+
+  editPolicy(): void {
+    const policy = this.policy();
+    if (!policy || policy.policyStatus !== 'DRAFT') return;
+
+    this.editPolicyModel = {
+      policyType: policy.policyType,
+      sumInsured: policy.sumInsured,
+      startDate: policy.startDate,
+      endDate: policy.endDate,
+      description: policy.description
+    };
+    this.editDialogVisible.set(true);
+  }
+
+  savePolicyEdits(): void {
+    const policyNumber = this.policy()?.policyNumber;
+    if (!policyNumber) return;
+
+    const payload = {
+      ...this.editPolicyModel,
+      customerCode: this.policy()?.customerCode
+    };
+
+    this.http.put(`${this.server}/policies/${policyNumber}`, payload).subscribe({
+      next: () => {
+        this.editDialogVisible.set(false);
+        this.loadPolicy(policyNumber); 
+      },
+      error: (err) => console.error('Failed to save edits', err)
+    });
   }
 }
