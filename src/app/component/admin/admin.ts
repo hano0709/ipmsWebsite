@@ -5,9 +5,6 @@ import { Router, ActivatedRoute, NavigationEnd, RouterLink, RouterLinkActive, Ro
 import { Avatar } from 'primeng/avatar';
 import { Button } from 'primeng/button';
 import { filter } from 'rxjs/operators';
-import { Policy } from '../../interface/policy';
-import { Customer } from '../../interface/customer';
-import { PolicyAuditLogDTO } from '../../interface/policyAuditLogDTO';
 
 @Component({
   selector: 'app-admin',
