@@ -2,8 +2,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, signal } from '@angular/core';
 import { Policy } from '../../../interface/policy';
-import { Customer } from '../../../interface/customer';
-import { PolicyAuditLogDTO } from '../../../interface/policyAuditLogDTO';
+import { PolicyAudit } from '../../../interface/policyAudit';
 import { ButtonModule } from 'primeng/button';
 import { RouterLink } from '@angular/router';
 
@@ -23,7 +22,7 @@ export class Dashboard implements OnInit {
   activePolicies = signal(0);
   expiringSoon = signal(0);
   totalCustomers = signal(0);
-  recentChanges = signal<PolicyAuditLogDTO[]>([]);
+  recentChanges = signal<PolicyAudit[]>([]);
 
   private readonly server: string = 'http://localhost:8080/api/v1';
 
@@ -61,7 +60,7 @@ export class Dashboard implements OnInit {
   }
 
   private loadRecentChanges(): void {
-    this.http.get<PolicyAuditLogDTO[]>(`${this.server}/policies/state-changes`).subscribe({
+    this.http.get<PolicyAudit[]>(`${this.server}/policies/state-changes`).subscribe({
       next: (changes) => this.recentChanges.set(changes),
       error: (err) => console.error('Failed to load recent changes', err)
     });

@@ -73,7 +73,9 @@
                         </span>
                     </td>
                     <td class="actions">
-                        <button class="btn btn-sm btn-info me-1" (click)="viewPolicy(policy)">View</button>
+                        <button class="btn btn-sm btn-info me-1" [routerLink]="['/admin/policies', policy.policyNumber]">
+                            View
+                        </button>
                         <button *ngIf="policy.policyStatus === 'DRAFT'" class="btn btn-sm btn-secondary me-1"
                             (click)="editPolicy(policy)">Edit</button>
                         <button *ngIf="policy.policyStatus === 'DRAFT'" class="btn btn-sm btn-success me-1"

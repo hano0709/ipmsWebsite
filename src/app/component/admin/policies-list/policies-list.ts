@@ -4,13 +4,15 @@ import { CommonModule } from '@angular/common';
 import { Policy } from '../../../interface/policy';   
 import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-policies-list',
   imports: [
     CommonModule,
     FormsModule,
-    DialogModule
+    DialogModule,
+    RouterModule
   ],
   templateUrl: './policies-list.html',
   styleUrl: './policies-list.css'
@@ -171,7 +173,7 @@ export class PoliciesList implements OnInit {
 
       if(this.filterSearch() &&
         !p.policyNumber.toLowerCase().includes(this.filterSearch().toLowerCase()) &&
-        !p.policyNumber.toLowerCase().includes(this.filterSearch().toLowerCase())
+        !p.customerCode.toLowerCase().includes(this.filterSearch().toLowerCase())
       ) {
         return false;
       }

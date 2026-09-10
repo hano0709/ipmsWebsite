@@ -1,0 +1,108 @@
+<div class="container-fluid mt-3">
+    <div class="row">
+
+        <!-- Left Column: Policy Info + Status Actions -->
+        <div class="col-md-6">
+            <div class="card mb-3">
+                <div class="card-header fw-bold">Policy Information</div>
+                <div class="card-body">
+                    <!-- Display all fields read-only -->
+                    <p><strong>Policy Number:</strong> {{ policy()?.policyNumber }}</p>
+                    <p><strong>Type:</strong> {{ policy()?.policyType }}</p>
+                    <p><strong>Status:</strong> {{ policy()?.policyStatus }}</p>
+                    <p><strong>Customer Code:</strong> {{ policy()?.customerCode }}</p>
+                    <p><strong>Agent Code:</strong> {{ policy()?.agentCode }}</p>
+                    <p><strong>Sum Insured:</strong> {{ policy()?.sumInsured | currency:'INR' }}</p>
+                    <p><strong>Premium Amount:</strong> {{ policy()?.premiumAmount | currency:'INR' }}</p>
+                    <p><strong>Start Date:</strong> {{ policy()?.startDate | date }}</p>
+                    <p><strong>End Date:</strong> {{ policy()?.endDate | date }}</p>
+                    <p><strong>Description:</strong> {{ policy()?.description }}</p>
+
+                    <!-- Edit button if DRAFT -->
+                    <button *ngIf="policy()?.policyStatus === 'DRAFT'" class="btn btn-secondary">
+                        Edit
+                    </button>
+                </div>
+            </div>
+
+            <!-- Status Transition Action Bar -->
+            <div class="card">
+                <div class="card-header fw-bold">Actions</div>
+                <div class="card-body">
+                    <button *ngIf="policy()?.policyStatus === 'DRAFT'" class="btn btn-success me-2"
+                        (click)="transition('ACTIVE')">Activate</button>
+                    <button *ngIf="policy()?.policyStatus === 'ACTIVE'" class="btn btn-primary me-2"
+                        (click)="transition('RENEWED')">Renew</button>
+                    <button *ngIf="policy()?.policyStatus === 'ACTIVE'" class="btn btn-warning me-2"
+                        (click)="transition('SUSPENDED')">Suspend</button>
+                    <button *ngIf="policy()?.policyStatus !== 'CANCELLED'" class="btn btn-danger"
+                        (click)="transition('CANCELLED')">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Documents + Audit Trail -->
+        <div class="col-md-6">
+            <!-- Documents Section -->
+            <div class="card mb-3">
+                <div class="card-header fw-bold">Documents</div>
+                <div class="card-body">
+                    <ul *ngIf="documents() as docs" class="list-group">
+                        <li *ngFor="let doc of docs"
+                            class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ doc.fileName }}
+                            <button class="btn btn-sm btn-outline-primary" (click)="downloadDoc(doc)">Download</button>
+                        </li>
+                    </ul>
+
+                    <button class="btn btn-secondary mt-2" (click)="uploadDoc()">Upload Document</button>
+                </div>
+            </div>
+
+            <!-- Audit Trail Section -->
+            <div class="card">
+                <div class="card-header fw-bold">Audit Trail</div>
+                <div class="card-body">
+                    <ul *ngIf="auditTrail() as trail" class="timeline">
+                        <li *ngFor="let entry of trail" class="timeline-item" [ngClass]="entry.newStatus.toLowerCase()">
+                            <div class="timeline-icon">
+                                <i [ngClass]="{
+                                    'bi-pencil': entry.newStatus === 'DRAFT',
+                                    'bi-check-circle': entry.newStatus === 'ACTIVE',
+                                    'bi-arrow-repeat': entry.newStatus === 'RENEWED',
+                                    'bi-pause-circle': entry.newStatus === 'SUSPENDED',
+                                    'bi-x-circle': entry.newStatus === 'CANCELLED'
+                                }"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <span class="badge me-2" [ngClass]="{
+                                    'bg-secondary': entry.newStatus === 'DRAFT',
+                                    'bg-success': entry.newStatus === 'ACTIVE',
+                                    'bg-primary': entry.newStatus === 'RENEWED',
+                                    'bg-warning text-dark': entry.newStatus === 'SUSPENDED',
+                                    'bg-danger': entry.newStatus === 'CANCELLED'
+                                    }"
+                                >
+                                    {{ entry.newStatus }}
+                                </span>
+                                <strong>{{ entry.previousStatus }}</strong> → <strong>{{ entry.newStatus }}</strong><br>
+                                Changed by User {{ entry.changedBy }}
+                                <small class="text-muted d-block">Created by User {{ entry.createdBy }}</small>
+
+                                <!-- Conditional timestamps -->
+                                <small *ngIf="entry.newStatus === 'DRAFT'" class="text-muted d-block">
+                                    Created at {{ entry.createdAt | date:'short' }}
+                                </small>
+                                <small *ngIf="entry.newStatus !== 'DRAFT'" class="text-muted d-block">
+                                    Changed at {{ entry.changedAt | date:'short' }}
+                                </small>
+
+                                <small class="text-muted d-block">{{ entry.remarks }}</small>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
