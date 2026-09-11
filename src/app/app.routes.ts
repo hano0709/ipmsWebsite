@@ -12,7 +12,6 @@ export const routes: Routes = [
     data: { breadcrumb: 'Admin' },
     children: [
       { path: 'dashboard', loadComponent: () => import('./component/admin/dashboard/dashboard').then(m => m.Dashboard), data: { breadcrumb: 'Dashboard' } },
-      { path: 'policies', loadComponent: () => import('./component/admin/policies-list/policies-list').then(m => m.PoliciesList), data: { breadcrumb: 'Policies' } },
       { path: 'customers-agents', loadComponent: () => import('./component/admin/customers-agents/customers-agents').then(m => m.CustomersAgentsComponent), data: { breadcrumb: 'Customers & Agents Management' } },
       {
         path: 'policies',
@@ -22,6 +21,11 @@ export const routes: Routes = [
             path: '',
             loadComponent: () => import('./component/admin/policies-list/policies-list').then(m => m.PoliciesList),
             data: { breadcrumb: 'Policies' }
+          },
+          { 
+            path: 'create', 
+            loadComponent: () => import('./component/admin/policy-form/policy-form').then(m => m.PolicyForm),
+            data: {breadcrumb: "Policy Creation"}
           },
           {
             path: ':policyNumber',
