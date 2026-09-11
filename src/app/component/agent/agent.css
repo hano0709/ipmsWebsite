@@ -1,0 +1,17 @@
+.nav-link.active {
+  background-color: #495057;
+  border-radius: 4px;
+}
+
+.nav-link:hover {
+  background-color: #343a40;
+  border-radius: 4px;
+}
+
+header .breadcrumb a {
+  text-decoration: none;
+}
+
+.notification-button {
+  font-size: 1.1rem;
+}
