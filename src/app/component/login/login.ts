@@ -26,8 +26,11 @@ export class Login {
   onLogin() {
     this.userService.login(this.email, this.password).subscribe({
       next: (response) => {
+        console.log(response.role);
         if(response.role === "ADMIN"){
           this.router.navigate(['/admin']);
+        } else if(response.role === "AGENT"){
+          this.router.navigate(['/agent']);
         }
       },
       error: (err) => {
