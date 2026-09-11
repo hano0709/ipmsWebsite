@@ -1,9 +1,7 @@
-import { User } from "./user";
-
 export interface Agent {
     id: number;
     agentCode: string;
-    user: User;
+    userId: number;
     fullName: string;
     licenseNumber: string;
     isActive: boolean;
