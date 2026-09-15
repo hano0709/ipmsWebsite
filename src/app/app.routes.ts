@@ -46,9 +46,9 @@ export const routes: Routes = [
     component: Agent,
     canActivate: [AgentGuard],
     data: { breadcrumb: 'Agent' },
-    //children: [
-      //{ path: 'dashboard', loadComponent: () => import('./component/agent/dashboard/dashboard').then(m => m.Dashboard), data: { breadcrumb: 'Dashboard' } },
-      //{ path: 'customers-agents', loadComponent: () => import('./component/agent/customers-agents/customers-agents').then(m => m.CustomersAgentsComponent), data: { breadcrumb: 'Customers & Agents Management' } },
+    children: [
+      { path: 'dashboard', loadComponent: () => import('./component/agent/dashboard/dashboard').then(m => m.Dashboard), data: { breadcrumb: 'Dashboard' } },
+      { path: 'customers', loadComponent: () => import('./component/agent/customers/customers').then(m => m.Customers), data: { breadcrumb: 'Customer Management' } },
       // {
       //   path: 'policies',
       //   data: { breadcrumb: 'Policies' },
@@ -68,7 +68,7 @@ export const routes: Routes = [
       //       loadComponent: () => import('./component/admin/policy-details/policy-details').then(m => m.PolicyDetails),
       //       data: { breadcrumb: 'Policy Details' }
       //     }
-      //   ]
+         ]
       //},
       //   { path: 'notifications', loadComponent: () => import('./component/notifications/notifications').then(m => m.Notifications), data: { breadcrumb: 'Notifications' } }
       //{ path: 'customers/add', loadComponent: () => import('./component/admin/customers-agents/customers-agents').then(m => m.CustomersAgentsComponent), data: { breadcrumb: 'Customer & Agents Management' } },
