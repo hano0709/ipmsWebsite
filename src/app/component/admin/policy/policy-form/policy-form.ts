@@ -4,9 +4,9 @@ import { ReactiveFormsModule, FormBuilder, Validators, FormGroup, FormsModule } 
 import { HttpClient } from '@angular/common/http';
 import { debounceTime, switchMap } from 'rxjs/operators';
 import { AutoCompleteModule, AutoCompleteSelectEvent } from 'primeng/autocomplete';
-import { Customer } from '../../../interface/customer';
+import { Customer } from '../../../../interface/customer';
 import { Observable } from 'rxjs';
-import { Agent } from '../../../interface/agent';
+import { Agent } from '../../../../interface/agent';
 import { Router } from '@angular/router';
 
 @Component({
