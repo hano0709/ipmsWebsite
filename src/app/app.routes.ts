@@ -21,17 +21,17 @@ export const routes: Routes = [
         children: [
           {
             path: '',
-            loadComponent: () => import('./component/admin/policies-list/policies-list').then(m => m.PoliciesList),
+            loadComponent: () => import('./component/admin/policy/policies-list/policies-list').then(m => m.PoliciesList),
             data: { breadcrumb: 'Policies' }
           },
           { 
             path: 'create', 
-            loadComponent: () => import('./component/admin/policy-form/policy-form').then(m => m.PolicyForm),
+            loadComponent: () => import('./component/admin/policy/policy-form/policy-form').then(m => m.PolicyForm),
             data: {breadcrumb: "Policy Creation"}
           },
           {
             path: ':policyNumber',
-            loadComponent: () => import('./component/admin/policy-details/policy-details').then(m => m.PolicyDetails),
+            loadComponent: () => import('./component/admin/policy/policy-details/policy-details').then(m => m.PolicyDetails),
             data: { breadcrumb: 'Policy Details' }
           }
         ]
@@ -49,30 +49,30 @@ export const routes: Routes = [
     children: [
       { path: 'dashboard', loadComponent: () => import('./component/agent/dashboard/dashboard').then(m => m.Dashboard), data: { breadcrumb: 'Dashboard' } },
       { path: 'customers', loadComponent: () => import('./component/agent/customers/customers').then(m => m.Customers), data: { breadcrumb: 'Customer Management' } },
-      // {
-      //   path: 'policies',
-      //   data: { breadcrumb: 'Policies' },
-      //   children: [
-      //     {
-      //       path: '',
-      //       loadComponent: () => import('./component/admin/policies-list/policies-list').then(m => m.PoliciesList),
-      //       data: { breadcrumb: 'Policies' }
-      //     },
-      //     { 
-      //       path: 'create', 
-      //       loadComponent: () => import('./component/admin/policy-form/policy-form').then(m => m.PolicyForm),
-      //       data: {breadcrumb: "Policy Creation"}
-      //     },
-      //     {
-      //       path: ':policyNumber',
-      //       loadComponent: () => import('./component/admin/policy-details/policy-details').then(m => m.PolicyDetails),
-      //       data: { breadcrumb: 'Policy Details' }
-      //     }
+       {
+         path: 'policies',
+         data: { breadcrumb: 'Policies' },
+         children: [
+           {
+             path: '',
+             loadComponent: () => import('./component/agent/policy/policies-list/policies-list').then(m => m.PoliciesList),
+             data: { breadcrumb: 'Policies' }
+           },
+           { 
+             path: 'create', 
+             loadComponent: () => import('./component/agent/policy/policy-form/policy-form').then(m => m.PolicyForm),
+             data: {breadcrumb: "Policy Creation"}
+           },
+           {
+             path: ':policyNumber',
+             loadComponent: () => import('./component/agent/policy/policy-details/policy-details').then(m => m.PolicyDetails),
+             data: { breadcrumb: 'Policy Details' }
+           }
          ]
-      //},
-      //   { path: 'notifications', loadComponent: () => import('./component/notifications/notifications').then(m => m.Notifications), data: { breadcrumb: 'Notifications' } }
+      },
+      //{ path: 'notifications', loadComponent: () => import('./component/notifications/notifications').then(m => m.Notifications), data: { breadcrumb: 'Notifications' } }
       //{ path: 'customers/add', loadComponent: () => import('./component/admin/customers-agents/customers-agents').then(m => m.CustomersAgentsComponent), data: { breadcrumb: 'Customer & Agents Management' } },
-    //]
+    ]
   },
   { path: 'unauthorized', loadComponent: () => import('./component/unauthorized/unauthorized').then(m => m.Unauthorized) },
-];
+]

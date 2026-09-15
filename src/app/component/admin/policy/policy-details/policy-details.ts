@@ -2,9 +2,9 @@ import { Component, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { Policy } from '../../../interface/policy';
-import { PolicyDocument } from '../../../interface/policyDocument';
-import { PolicyAudit } from '../../../interface/policyAudit';
+import { Policy } from '../../../../interface/policy';
+import { PolicyDocument } from '../../../../interface/policyDocument';
+import { PolicyAudit } from '../../../../interface/policyAudit';
 import { DialogModule } from 'primeng/dialog';
 import { FormsModule } from '@angular/forms';
 

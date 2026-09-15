@@ -1,7 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { Policy } from '../../../interface/policy';   
+import { Policy } from '../../../../interface/policy';   
 import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { RouterModule } from '@angular/router';
@@ -40,7 +40,7 @@ export class PoliciesList implements OnInit {
   }
 
   loadPolicies(): void {
-    this.http.get<Policy[]>(`${this.server}/policies`).subscribe({
+    this.http.get<Policy[]>(`${this.server}/agents/policies`).subscribe({
       next: (data) => {
         this.policies.set(data)
       },
