@@ -4,6 +4,7 @@ import { Admin } from './component/admin/admin';
 import { AdminGuard } from './guards/admin-guard';
 import { Agent } from './component/agent/agent';
 import { AgentGuard } from './guards/agent-guard';
+import { Customer } from './component/customer/customer';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
@@ -71,7 +72,36 @@ export const routes: Routes = [
          ]
       },
       //{ path: 'notifications', loadComponent: () => import('./component/notifications/notifications').then(m => m.Notifications), data: { breadcrumb: 'Notifications' } }
-      //{ path: 'customers/add', loadComponent: () => import('./component/admin/customers-agents/customers-agents').then(m => m.CustomersAgentsComponent), data: { breadcrumb: 'Customer & Agents Management' } },
+    ]
+  },
+  {
+    path: 'customer',
+    component: Customer,
+    data: { breadcrumb: 'Customer' },
+    children: [
+      { path: 'dashboard', loadComponent: () => import('./component/customer/dashboard/dashboard').then(m => m.Dashboard), data: { breadcrumb: 'Dashboard' } },
+      // {
+      //    path: 'policies',
+      //    data: { breadcrumb: 'Policies' },
+      //    children: [
+      //      {
+      //        path: '',
+      //        loadComponent: () => import('./component/customer/policy/policies-list/policies-list').then(m => m.PoliciesList),
+      //        data: { breadcrumb: 'Policies' }
+      //      },
+      //      { 
+      //        path: 'create', 
+      //        loadComponent: () => import('./component/customer/policy/policy-form/policy-form').then(m => m.PolicyForm),
+      //        data: {breadcrumb: "Policy Creation"}
+      //      },
+      //      {
+      //        path: ':policyNumber',
+      //        loadComponent: () => import('./component/customer/policy/policy-details/policy-details').then(m => m.PolicyDetails),
+      //        data: { breadcrumb: 'Policy Details' }
+      //      }
+      //    ]
+      // },
+      //{ path: 'notifications', loadComponent: () => import('./component/notifications/notifications').then(m => m.Notifications), data: { breadcrumb: 'Notifications' } }
     ]
   },
   { path: 'unauthorized', loadComponent: () => import('./component/unauthorized/unauthorized').then(m => m.Unauthorized) },

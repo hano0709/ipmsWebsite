@@ -31,6 +31,8 @@ export class Login {
           this.router.navigate(['/admin']);
         } else if(response.role === "AGENT"){
           this.router.navigate(['/agent']);
+        } else if(response.role === "CUSTOMER"){
+          this.router.navigate(['/customer'])
         }
       },
       error: (err) => {
