@@ -2,20 +2,19 @@
   <!-- Header always visible -->
   <header class="d-flex justify-content-between align-items-center bg-white border-bottom p-3">
     <div class="d-flex align-items-center">
+
+      <!-- Logo -->
+      <a routerLink="/customer/dashboard" class="d-flex align-items-center text-decoration-none">
+        <img src="assets/logo.png" alt="IPMS Logo" class="me-2" style="height:40px;">
+        <span class="fw-bold" style="color:#0456a2; font-size:1.25rem;">
+          Insurance Policy Management System
+        </span>
+      </a>
+
       <!-- Hamburger only visible on mobile -->
       <button class="btn btn-dark d-md-none me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu">
         ☰
       </button>
-
-      <!-- Breadcrumb -->
-      <nav aria-label="breadcrumb">
-        <ol class="breadcrumb mb-0">
-          <li *ngFor="let crumb of breadcrumbs; let last = last" class="breadcrumb-item" [class.active]="last">
-            <a *ngIf="!last" [routerLink]="crumb.url">{{ crumb.label }}</a>
-            <span *ngIf="last">{{ crumb.label }}</span>
-          </li>
-        </ol>
-      </nav>
     </div>
 
     <!-- Right side -->
@@ -31,7 +30,7 @@
       </p-button>
 
       <p-avatar icon="pi pi-user" shape="circle" ariaLabel="Customer profile" class="me-2"></p-avatar>
-      <span class="fw-bold">Customer</span>
+      <span class="fw-bold">{{ customer?.fullName }}</span>
     </div>
   </header>
 
@@ -75,6 +74,15 @@
 
     <!-- Main Content -->
     <main class="col bg-light p-4 overflow-auto">
+      <!-- Breadcrumb -->
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+          <li *ngFor="let crumb of breadcrumbs; let last = last" class="breadcrumb-item" [class.active]="last">
+            <a *ngIf="!last" [routerLink]="crumb.url">{{ crumb.label }}</a>
+            <span *ngIf="last">{{ crumb.label }}</span>
+          </li>
+        </ol>
+      </nav>
       <router-outlet></router-outlet>
     </main>
   </div>
