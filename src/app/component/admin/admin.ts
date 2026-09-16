@@ -29,31 +29,36 @@ export class Admin implements OnInit {
   constructor(private router: Router, private route: ActivatedRoute, private http: HttpClient) {}
 
   ngOnInit(): void {
+    this.buildBreadcrumbs();
+    
     this.setupBreadcrumbs();
   }
 
-  private setupBreadcrumbs(): void{
+  private setupBreadcrumbs(): void {
     this.router.events
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
       .subscribe(() => {
-        const crumbs: { label: string, url: string }[] = [];
-
-        let currentRoute = this.route.root;
-        let url = '/admin';
-
-        while (currentRoute.firstChild) {
-          currentRoute = currentRoute.firstChild;
-          if (currentRoute.snapshot.url.length) {
-            url += '/' + currentRoute.snapshot.url.map((segment: any) => segment.path).join('/');
-            crumbs.push({
-              label: currentRoute.snapshot.data['breadcrumb'] || currentRoute.snapshot.url[0].path,
-              url: '/admin' + url
-            });
-          }
-        }
-
-        this.breadcrumbs = crumbs;
+        this.buildBreadcrumbs();
       });
+  }
+
+  private buildBreadcrumbs(): void {
+    const crumbs: { label: string, url: string }[] = [];
+    let currentRoute = this.route.root;
+    let url = '/admin';
+
+    while (currentRoute.firstChild) {
+      currentRoute = currentRoute.firstChild;
+      if (currentRoute.snapshot.url.length) {
+        url += '/' + currentRoute.snapshot.url.map((segment: any) => segment.path).join('/');
+        crumbs.push({
+          label: currentRoute.snapshot.data['breadcrumb'] || currentRoute.snapshot.url[0].path,
+          url: '/admin' + url
+        });
+      }
+    }
+
+    this.breadcrumbs = crumbs;
   }
 
   logout(): void {
