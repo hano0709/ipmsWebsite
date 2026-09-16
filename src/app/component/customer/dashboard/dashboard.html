@@ -1,0 +1,54 @@
+<div class="row mb-4">
+  <div class="col">
+    <div class="card">
+      <div class="card-header fw-bold">
+        My Policies
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-4 mb-3" *ngFor="let policy of policies()">
+            <div class="card h-100">
+              <div class="card-body d-flex flex-column">
+                <!-- Policy Type Icon -->
+                <div class="d-flex align-items-center mb-2">
+                  <i class="pi"
+                     [ngClass]="{
+                       'pi-heart': policy.policyType === 'LIFE',
+                       'pi-shield': policy.policyType === 'HEALTH',
+                       'pi-car': policy.policyType === 'MOTOR',
+                       'pi-home': policy.policyType === 'PROPERTY'
+                     }"
+                     style="font-size: 1.5rem;"></i>
+                  <h5 class="card-title ms-2 mb-0">{{ policy.policyType }}</h5>
+                </div>
+
+                <!-- Status Badge -->
+                <p class="mb-2">
+                    <strong>Status:</strong>
+                    <span class="badge ms-2" [ngClass]="{
+                        'bg-success': policy.policyStatus === 'ACTIVE',
+                        'bg-danger': policy.policyStatus === 'CANCELLED',
+                        'bg-warning text-dark': policy.policyStatus === 'SUSPENDED',
+                        'text-dark': policy.policyStatus === 'DRAFT',
+                        'bg-primary': policy.policyStatus === 'RENEWED',
+                        'bg-dark': policy.policyStatus === 'EXPIRED'
+                    }">
+                    {{ policy.policyStatus }}
+                    </span>
+                </p>
+
+                <!-- Expiry Date -->
+                <p class="mb-2"><strong>Expiry:</strong> {{ policy.endDate | date:'mediumDate' }}</p>
+
+                <!-- Quick Action -->
+                <p-button label="View Documents" icon="pi pi-file" styleClass="p-button-info mt-auto fw-bold"
+                  [routerLink]="['/customer/policies', policy.policyNumber, 'documents']">
+                </p-button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
