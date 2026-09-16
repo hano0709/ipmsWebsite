@@ -28,9 +28,11 @@ export class Login {
       next: (response) => {
         console.log(response.role);
         if(response.role === "ADMIN"){
-          this.router.navigate(['/admin']);
+          this.router.navigate(['/admin/dashboard']);
         } else if(response.role === "AGENT"){
-          this.router.navigate(['/agent']);
+          this.router.navigate(['/agent/dashboard']);
+        } else if(response.role === "CUSTOMER"){
+          this.router.navigate(['/customer/dashboard'])
         }
       },
       error: (err) => {
