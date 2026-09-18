@@ -23,7 +23,6 @@ export class PoliciesList implements OnInit {
   policies = signal<Policy[]>([]);
   pageSize = signal(10);
   currentPage = signal(0);
-  viewDialogVisible = signal(false);
   selectedPolicy = signal<Policy | null>(null);
   editDialogVisible = signal(false);
   editPolicyData = signal<Partial<Policy>>({});
@@ -75,17 +74,6 @@ export class PoliciesList implements OnInit {
   changePageSize(size: number): void {
     this.pageSize.set(size);
     this.currentPage.set(0);
-  }
-
-
-  viewPolicy(policy: Policy): void {
-    this.selectedPolicy.set(policy);
-    this.viewDialogVisible.set(true);
-  }
-
-  closeViewDialog(): void {
-    this.viewDialogVisible.set(false);
-    this.selectedPolicy.set(null);
   }
 
   editPolicy(policy: Policy): void {

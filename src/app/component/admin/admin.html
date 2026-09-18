@@ -31,18 +31,18 @@
       </p-button>
 
       <p-popover #popover styleClass="notification-panel">
-        <div *ngIf="notifications().length; else noNotifications">
-          <div *ngFor="let notif of notifications(); trackBy: trackById"
-              class="p-2 border-bottom notification-item"
-              (click)="markAsRead(notif.id)">
-            <strong class="text-primary">{{ notif.title }}</strong>
-            <p class="mb-1">{{ notif.message }}</p>
-            <small class="text-muted">{{ notif.createdAt | date:'short' }}</small>
-          </div>
-        </div>
-        <ng-template #noNotifications>
+        @if (notifications().length) {
+          @for (notif of notifications(); track notif.id) {
+            <div class="p-2 border-bottom notification-item"
+               (click)="markAsRead(notif.id)">
+              <strong class="text-primary">{{ notif.title }}</strong>
+              <p class="mb-1">{{ notif.message }}</p>
+              <small class="text-muted">{{ notif.createdAt | date:'short' }}</small>
+            </div>
+          }
+        } @else {
           <p class="text-muted m-2">No new notifications</p>
-        </ng-template>
+        }
       </p-popover>
 
       <p-avatar icon="pi pi-user" shape="circle" ariaLabel="Admin profile" class="me-2"></p-avatar>
@@ -94,10 +94,15 @@
     <main class="col bg-light p-4 overflow-auto">
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb mb-0">
-          <li *ngFor="let crumb of breadcrumbs; let last = last" class="breadcrumb-item" [class.active]="last">
-            <a *ngIf="!last" [routerLink]="crumb.url">{{ crumb.label }}</a>
-            <span *ngIf="last">{{ crumb.label }}</span>
-          </li>
+          @for (crumb of breadcrumbs; track crumb.url; let last = $last) {
+            <li class="breadcrumb-item" [class.active]="last">
+              @if (!last) {
+                <a [routerLink]="crumb.url">{{ crumb.label }}</a>
+              } @else {
+                <span>{{ crumb.label }}</span>
+              }
+            </li>
+          }
         </ol>
       </nav>
       <router-outlet></router-outlet>

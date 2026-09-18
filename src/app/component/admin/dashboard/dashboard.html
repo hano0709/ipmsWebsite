@@ -88,13 +88,15 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr *ngFor="let change of recentChanges()">
-                            <td>{{ change.policyNumber }}</td>
-                            <td>{{ change.previousStatus || '-' }}</td>
-                            <td>{{ change.newStatus }}</td>
-                            <td>{{ change.remarks }}</td>
-                            <td>{{ change.changedBy || 'System' }}</td>
-                        </tr>
+                        @for (change of recentChanges(); track $index) {
+                            <tr>
+                                <td>{{ change.policyNumber }}</td>
+                                <td>{{ change.previousStatus || '-' }}</td>
+                                <td>{{ change.newStatus }}</td>
+                                <td>{{ change.remarks }}</td>
+                                <td>{{ change.changedBy || 'System' }}</td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>
