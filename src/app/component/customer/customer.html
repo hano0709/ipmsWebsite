@@ -19,16 +19,6 @@
 
     <!-- Right side -->
     <div class="d-flex align-items-center">
-      <p-button
-        icon="pi pi-bell"
-        [badge]="notificationCount.toString()"
-        badgeSeverity="danger"
-        [rounded]="true"
-        [text]="true"
-        ariaLabel="Notifications"
-        styleClass="notification-button me-3">
-      </p-button>
-
       <p-avatar icon="pi pi-user" shape="circle" ariaLabel="Customer profile" class="me-2"></p-avatar>
       <span class="fw-bold">{{ customer?.fullName }}</span>
     </div>
