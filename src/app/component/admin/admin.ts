@@ -94,7 +94,6 @@ export class Admin implements OnInit {
     return notif.id;
   }
 
-
   logout(): void {
     const refreshToken = localStorage.getItem('refreshToken');
     if(refreshToken) {

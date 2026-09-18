@@ -28,7 +28,6 @@ export class Dashboard implements OnInit {
 
   ngOnInit(): void {
     this.loadPolicies();
-    this.loadRecentChanges();
   }
 
   private loadPolicies(): void {
@@ -52,10 +51,5 @@ export class Dashboard implements OnInit {
         }).length;
         this.renewalDue.set(renewalCount);
       });
-  }
-
-  private loadRecentChanges(): void {
-    this.http.get<any[]>(`${this.server}/agents/me/policies/state-changes`)
-      .subscribe(changes => this.recentChanges.set(changes));
   }
 }
