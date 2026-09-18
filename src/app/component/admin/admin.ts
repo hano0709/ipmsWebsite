@@ -4,7 +4,10 @@ import { Component, OnInit, signal } from '@angular/core';
 import { Router, ActivatedRoute, NavigationEnd, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { Avatar } from 'primeng/avatar';
 import { Button } from 'primeng/button';
+import { PopoverModule } from 'primeng/popover'
 import { filter } from 'rxjs/operators';
+import { notification } from '../../interface/notification';
+import { NotificationService } from '../../service/notification.service';
 
 @Component({
   selector: 'app-admin',
@@ -17,21 +20,25 @@ import { filter } from 'rxjs/operators';
     RouterLinkActive,
     RouterOutlet,
     Avatar,
-    Button
+    Button,
+    PopoverModule
   ]
 })
 export class Admin implements OnInit {
   breadcrumbs: { label: string, url: string }[] = [];
-
-  notificationCount = 3;
+  notifications = signal<notification[]>([]);
+  notificationCount = signal(0);
   private readonly server: string = 'http://localhost:8080/api/v1';
 
-  constructor(private router: Router, private route: ActivatedRoute, private http: HttpClient) {}
+  constructor(private router: Router, 
+              private route: ActivatedRoute, 
+              private http: HttpClient,
+              private notificationService: NotificationService) {}
 
   ngOnInit(): void {
     this.buildBreadcrumbs();
-    
     this.setupBreadcrumbs();
+    this.loadNotifications();
   }
 
   private setupBreadcrumbs(): void {
@@ -39,6 +46,7 @@ export class Admin implements OnInit {
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
       .subscribe(() => {
         this.buildBreadcrumbs();
+        this.loadNotifications();
       });
   }
 
@@ -59,6 +67,31 @@ export class Admin implements OnInit {
     }
 
     this.breadcrumbs = crumbs;
+  }
+
+  private loadNotifications(): void {
+    this.notificationService.getNotifications().subscribe({
+      next: (data) => {
+        this.notifications.set(data);
+        this.notificationCount.set(data.length);
+      },
+      error: (err) => {console.error('Failed to load Notification', err)}
+    });
+  }
+
+  markAsRead(id: number): void {
+    this.http.patch(`${this.server}/notifications/${id}/read`, {})
+      .subscribe({
+        next: () => {
+          this.notifications.update(list => list.filter(n => n.id !== id));
+          this.notificationCount.set(this.notifications().length);
+        },
+        error: (err) => console.error(`Failed to mark notification ${id} as read`, err)
+      });
+  }
+
+  trackById(index: number, notif: notification): number {
+    return notif.id;
   }
 
   logout(): void {

@@ -15,3 +15,20 @@ header .breadcrumb a {
 .notification-button {
   font-size: 1.1rem;
 }
+
+.notification-panel {
+  width: 300px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.notification-panel strong {
+  color: #0456a2; /* matches logo blue */
+}
+
+.notification-item {
+  cursor: pointer;
+}
+.notification-item:hover {
+  background-color: #f8f9fa;
+}
