@@ -19,9 +19,11 @@
                     <p><strong>Description:</strong> {{ policy()?.description }}</p>
 
                     <!-- Edit button if DRAFT -->
-                    <button *ngIf="policy()?.policyStatus === 'DRAFT'" class="btn btn-secondary" (click)="editPolicy()">
-                        Edit
-                    </button>
+                     @if (policy()?.policyStatus === 'DRAFT') {
+                        <button class="btn btn-secondary" (click)="editPolicy()">
+                            Edit
+                        </button>
+                     }
                 </div>
             </div>
 
@@ -29,14 +31,18 @@
             <div class="card">
                 <div class="card-header fw-bold">Actions</div>
                 <div class="card-body">
-                    <button *ngIf="policy()?.policyStatus === 'DRAFT'" class="btn btn-success me-2"
-                        (click)="transition('ACTIVE')">Activate</button>
-                    <button *ngIf="policy()?.policyStatus === 'ACTIVE'" class="btn btn-primary me-2"
-                        (click)="transition('RENEWED')">Renew</button>
-                    <button *ngIf="policy()?.policyStatus === 'ACTIVE'" class="btn btn-warning me-2"
-                        (click)="transition('SUSPENDED')">Suspend</button>
-                    <button *ngIf="policy()?.policyStatus !== 'CANCELLED'" class="btn btn-danger"
-                        (click)="transition('CANCELLED')">Cancel</button>
+                    @if (policy()?.policyStatus === 'DRAFT') {
+                        <button class="btn btn-success me-2"
+                                (click)="transition('ACTIVE')">Activate</button>
+                    } @else if (policy()?.policyStatus === 'ACTIVE') {
+                        <button class="btn btn-primary me-2"
+                                (click)="transition('RENEWED')">Renew</button>
+                        <button class="btn btn-warning me-2"
+                                (click)="transition('SUSPENDED')">Suspend</button>
+                    } @else if (policy()?.policyStatus !== 'CANCELLED') {
+                        <button class="btn btn-danger"
+                                (click)="transition('CANCELLED')">Cancel</button>
+                    }
                 </div>
             </div>
         </div>
@@ -47,13 +53,16 @@
             <div class="card mb-3">
                 <div class="card-header fw-bold">Documents</div>
                 <div class="card-body">
-                    <ul *ngIf="documents() as docs" class="list-group">
-                        <li *ngFor="let doc of docs"
-                            class="list-group-item d-flex justify-content-between align-items-center">
-                            {{ doc.fileName }}
-                            <button class="btn btn-sm btn-outline-primary" (click)="downloadDoc(doc)">Download</button>
-                        </li>
-                    </ul>
+                    @if (documents(); as docs) {
+                        <ul class="list-group">
+                            @for (doc of docs; track $index) {
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    {{ doc.fileName }}
+                                    <button class="btn btn-sm btn-outline-primary" (click)="downloadDoc(doc)">Download</button>
+                                </li>
+                            }
+                        </ul>
+                    }
 
                     <button class="btn btn-secondary mt-2" (click)="uploadDoc()">Upload Document</button>
                 </div>
@@ -63,49 +72,53 @@
             <div class="card">
                 <div class="card-header fw-bold">Audit Trail</div>
                 <div class="card-body">
-                    <ul *ngIf="auditTrail() as trail" class="timeline">
-                        <li *ngFor="let entry of trail" class="timeline-item" [ngClass]="entry.newStatus.toLowerCase()">
-                            <div class="timeline-icon">
-                                <i [ngClass]="{
-                                    'bi-pencil': entry.newStatus === 'DRAFT',
-                                    'bi-check-circle': entry.newStatus === 'ACTIVE',
-                                    'bi-arrow-repeat': entry.newStatus === 'RENEWED',
-                                    'bi-pause-circle': entry.newStatus === 'SUSPENDED',
-                                    'bi-x-circle': entry.newStatus === 'CANCELLED'
-                                }"></i>
-                            </div>
-                            <div class="timeline-content">
-                                <span class="badge me-2" [ngClass]="{
-                                    'bg-secondary': entry.newStatus === 'DRAFT',
-                                    'bg-success': entry.newStatus === 'ACTIVE',
-                                    'bg-primary': entry.newStatus === 'RENEWED',
-                                    'bg-warning text-dark': entry.newStatus === 'SUSPENDED',
-                                    'bg-danger': entry.newStatus === 'CANCELLED'
-                                    }">
-                                    {{ entry.newStatus }}
-                                </span>
-                                <strong>{{ entry.previousStatus }}</strong> → <strong>{{ entry.newStatus }}</strong><br>
-                                Changed by User {{ entry.changedBy }}
-                                <small class="text-muted d-block">Created by User {{ entry.createdBy }}</small>
+                    @if (auditTrail(); as trail) {
+                        <ul class="timeline">
+                            @for (entry of trail; track $index) {
+                                <li class="timeline-item" [ngClass]="entry.newStatus.toLowerCase()">
+                                    <div class="timeline-icon">
+                                        <i [ngClass]="{
+                                            'bi-pencil': entry.newStatus === 'DRAFT',
+                                            'bi-check-circle': entry.newStatus === 'ACTIVE',
+                                            'bi-arrow-repeat': entry.newStatus === 'RENEWED',
+                                            'bi-pause-circle': entry.newStatus === 'SUSPENDED',
+                                            'bi-x-circle': entry.newStatus === 'CANCELLED'
+                                        }"></i>
+                                    </div>
+                                    <div class="timeline-content">
+                                        <span class="badge me-2" [ngClass]="{
+                                            'bg-secondary': entry.newStatus === 'DRAFT',
+                                            'bg-success': entry.newStatus === 'ACTIVE',
+                                            'bg-primary': entry.newStatus === 'RENEWED',
+                                            'bg-warning text-dark': entry.newStatus === 'SUSPENDED',
+                                            'bg-danger': entry.newStatus === 'CANCELLED'
+                                            }">
+                                            {{ entry.newStatus }}
+                                        </span>
+                                        <strong>{{ entry.previousStatus }}</strong> → <strong>{{ entry.newStatus }}</strong><br>
+                                        Changed by User {{ entry.changedBy }}
+                                        <small class="text-muted d-block">Created by User {{ entry.createdBy }}</small>
 
-                                <!-- Conditional timestamps -->
-                                <small *ngIf="entry.newStatus === 'DRAFT' && trail[0] === entry"
-                                    class="text-muted d-block">
-                                    Created at {{ entry.createdAt | date:'short' }}
-                                </small>
-                                <small *ngIf="entry.newStatus === 'DRAFT' && trail[0] !== entry"
-                                    class="text-muted d-block">
-                                    Changed at {{ entry.changedAt | date:'short' }}
-                                </small>
-                                <small *ngIf="entry.newStatus !== 'DRAFT'" class="text-muted d-block">
-                                    Changed at {{ entry.changedAt | date:'short' }}
-                                </small>
-
-
-                                <small class="text-muted d-block">{{ entry.remarks }}</small>
-                            </div>
-                        </li>
-                    </ul>
+                                        <!-- Conditional timestamps -->
+                                        @if (entry.newStatus === 'DRAFT' && trail[0] === entry) {
+                                            <small class="text-muted d-block">
+                                                Created at {{ entry.createdAt | date:'short' }}
+                                            </small>
+                                        } @else if (entry.newStatus === 'DRAFT' && trail[0] !== entry) {
+                                            <small class="text-muted d-block">
+                                                Changed at {{ entry.changedAt | date:'short' }}
+                                            </small>
+                                        } @else if (entry.newStatus !== 'DRAFT') {
+                                            <small class="text-muted d-block">
+                                                Changed at {{ entry.changedAt | date:'short' }}
+                                            </small>
+                                        }
+                                        <small class="text-muted d-block">{{ entry.remarks }}</small>
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    }
                 </div>
             </div>
         </div>

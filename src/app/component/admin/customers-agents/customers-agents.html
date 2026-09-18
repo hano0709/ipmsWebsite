@@ -39,34 +39,36 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let customer of customers()">
-          <td>{{ customer.customerCode }}</td>
-          <td>{{ customer.fullName }}</td>
-          <td>{{ customer.gender }}</td>
-          <td>{{ customer.phone }}</td>
-          <td>
-            <span class="badge" [ngClass]="{
-                        'bg-warning': customer.kycStatus === 'PENDING',
-                        'bg-success': customer.kycStatus === 'VERIFIED',
-                        'bg-danger': customer.kycStatus === 'REJECTED'
-                    }">
-              {{ customer.kycStatus }}
-            </span>
-          </td>
-          <td>
-            <button class="btn btn-sm btn-primary me-2" (click)="viewCustomer(customer)">View</button>
-            <button class="btn btn-sm btn-secondary me-2" (click)="editCustomer(customer)">Edit</button>
-            <button class="btn btn-sm" [ngClass]="customer.kycStatus === 'VERIFIED' ? 'btn-danger' : 'btn-success'"
-              (click)="toggleKycStatus(customer)">
-              {{ customer.kycStatus === 'VERIFIED' ? 'Reject' : 'Activate' }}
-            </button>
-          </td>
-        </tr>
+        @for (customer of customers(); track customer.customerCode) {
+          <tr>
+            <td>{{ customer.customerCode }}</td>
+            <td>{{ customer.fullName }}</td>
+            <td>{{ customer.gender }}</td>
+            <td>{{ customer.phone }}</td>
+            <td>
+              <span class="badge" [ngClass]="{
+                          'bg-warning': customer.kycStatus === 'PENDING',
+                          'bg-success': customer.kycStatus === 'VERIFIED',
+                          'bg-danger': customer.kycStatus === 'REJECTED'
+                      }">
+                {{ customer.kycStatus }}
+              </span>
+            </td>
+            <td>
+              <button class="btn btn-sm btn-primary me-2" (click)="viewCustomer(customer)">View</button>
+              <button class="btn btn-sm btn-secondary me-2" (click)="editCustomer(customer)">Edit</button>
+              <button class="btn btn-sm" [ngClass]="customer.kycStatus === 'VERIFIED' ? 'btn-danger' : 'btn-success'"
+                (click)="toggleKycStatus(customer)">
+                {{ customer.kycStatus === 'VERIFIED' ? 'Reject' : 'Activate' }}
+              </button>
+            </td>
+          </tr>
+        }
 
         <!-- Overlay Dialog -->
         <p-dialog header="Customer Details" [visible]="displayDialog" [modal]="true" appendTo="body" [closable]="true"
           [style]="{width: '500px'}" (onHide)="closeDialog()">
-          <div *ngIf="selectedCustomer">
+          @if (selectedCustomer) {
             <p><strong>Customer Code:</strong> {{ selectedCustomer.customerCode }}</p>
             <p><strong>Full Name:</strong> {{ selectedCustomer.fullName }}</p>
             <p><strong>Date of Birth:</strong> {{ selectedCustomer.dateOfBirth }}</p>
@@ -74,13 +76,12 @@
             <p><strong>Phone:</strong> {{ selectedCustomer.phone }}</p>
             <p><strong>Address:</strong> {{ selectedCustomer.address }}</p>
             <p><strong>KYC Status:</strong> {{ selectedCustomer.kycStatus }}</p>
-          </div>
+          }
         </p-dialog>
 
         <p-dialog header="Edit Customer" [(visible)]="editDialog" [modal]="true" appendTo="body" [closable]="true"
           [style]="{width: '500px'}" (onHide)="closeEditDialog()">
-
-          <div *ngIf="selectedCustomer">
+          @if (selectedCustomer) {
             <div class="mb-3">
               <label class="form-label">Full Name</label>
               <input type="text" class="form-control" [ngModel]="selectedCustomer.fullName"
@@ -131,7 +132,7 @@
                 Save
               </button>
             </div>
-          </div>
+          }
         </p-dialog>
 
       </tbody>
@@ -152,43 +153,43 @@
       </div>
 
       <!-- Customer form -->
-      <div *ngIf="entityType === 'CUSTOMER'">
-        <div class="mb-3">
-          <label class="form-label">Email</label>
-          <input type="email" class="form-control" [(ngModel)]="newEmail">
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Password</label>
-          <input type="password" class="form-control" [(ngModel)]="newPassword">
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Full Name</label>
-          <input type="text" class="form-control" [(ngModel)]="newCustomer.fullName">
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Date of Birth</label>
-          <input type="date" class="form-control" [(ngModel)]="newCustomer.dateOfBirth">
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Gender</label>
-          <select class="form-select" [(ngModel)]="newCustomer.gender">
-            <option value="MALE">Male</option>
-            <option value="FEMALE">Female</option>
-            <option value="OTHER">Other</option>
-          </select>
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Phone</label>
-          <input type="text" class="form-control" [(ngModel)]="newCustomer.phone">
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Address</label>
-          <input type="text" class="form-control" [(ngModel)]="newCustomer.address">
-        </div>
-      </div>
+       @if (entityType === 'CUSTOMER') {
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-control" [(ngModel)]="newEmail">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input type="password" class="form-control" [(ngModel)]="newPassword">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Full Name</label>
+            <input type="text" class="form-control" [(ngModel)]="newCustomer.fullName">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Date of Birth</label>
+            <input type="date" class="form-control" [(ngModel)]="newCustomer.dateOfBirth">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Gender</label>
+            <select class="form-select" [(ngModel)]="newCustomer.gender">
+              <option value="MALE">Male</option>
+              <option value="FEMALE">Female</option>
+              <option value="OTHER">Other</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Phone</label>
+            <input type="text" class="form-control" [(ngModel)]="newCustomer.phone">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Address</label>
+            <input type="text" class="form-control" [(ngModel)]="newCustomer.address">
+          </div>
+       }
 
       <!-- Agent form -->
-      <div *ngIf="entityType === 'AGENT'">
+      @if(entityType === 'AGENT') {
         <div class="mb-3">
           <label class="form-label">Email</label>
           <input type="email" class="form-control" [(ngModel)]="newEmail">
@@ -205,7 +206,7 @@
           <label class="form-label">License Number</label>
           <input type="text" class="form-control" [(ngModel)]="newAgent.licenseNumber">
         </div>
-      </div>
+      }
 
       <!-- Actions -->
       <div class="d-flex justify-content-end">
