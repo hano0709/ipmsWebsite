@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { ChangeDetectorRef, Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { Router, ActivatedRoute, NavigationEnd, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { Avatar } from 'primeng/avatar';
 import { Button } from 'primeng/button';
@@ -26,15 +26,14 @@ import { NotificationService } from '../../service/notification.service';
 })
 export class Admin implements OnInit {
   breadcrumbs: { label: string, url: string }[] = [];
-  notifications: notification[] = [];
-  notificationCount = 0;
+  notifications = signal<notification[]>([]);
+  notificationCount = signal(0);
   private readonly server: string = 'http://localhost:8080/api/v1';
 
   constructor(private router: Router, 
               private route: ActivatedRoute, 
               private http: HttpClient,
-              private notificationService: NotificationService,
-              private cd: ChangeDetectorRef) {}
+              private notificationService: NotificationService) {}
 
   ngOnInit(): void {
     this.buildBreadcrumbs();
@@ -48,7 +47,6 @@ export class Admin implements OnInit {
       .subscribe(() => {
         this.buildBreadcrumbs();
         this.loadNotifications();
-        this.cd.detectChanges();
       });
   }
 
@@ -74,9 +72,8 @@ export class Admin implements OnInit {
   private loadNotifications(): void {
     this.notificationService.getNotifications().subscribe({
       next: (data) => {
-        this.notifications = data;
-        this.notificationCount = data.length;
-        this.cd.detectChanges();
+        this.notifications.set(data);
+        this.notificationCount.set(data.length);
       },
       error: (err) => {console.error('Failed to load Notification', err)}
     });
@@ -86,9 +83,8 @@ export class Admin implements OnInit {
     this.http.patch(`${this.server}/notifications/${id}/read`, {})
       .subscribe({
         next: () => {
-          this.notifications = this.notifications.filter(n => n.id !== id);
-          this.notificationCount = this.notifications.length;
-          this.cd.detectChanges(); 
+          this.notifications.update(list => list.filter(n => n.id !== id));
+          this.notificationCount.set(this.notifications().length);
         },
         error: (err) => console.error(`Failed to mark notification ${id} as read`, err)
       });

@@ -21,7 +21,7 @@
     <div class="d-flex align-items-center">
       <p-button
         icon="pi pi-bell"
-        [badge]="notificationCount.toString()"
+        [badge]="notificationCount().toString()"
         badgeSeverity="danger"
         [rounded]="true"
         [text]="true"
@@ -31,8 +31,8 @@
       </p-button>
 
       <p-popover #popover styleClass="notification-panel">
-        <div *ngIf="notifications.length; else noNotifications">
-          <div *ngFor="let notif of notifications; trackBy: trackById"
+        <div *ngIf="notifications().length; else noNotifications">
+          <div *ngFor="let notif of notifications(); trackBy: trackById"
               class="p-2 border-bottom notification-item"
               (click)="markAsRead(notif.id)">
             <strong class="text-primary">{{ notif.title }}</strong>
