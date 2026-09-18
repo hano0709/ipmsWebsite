@@ -21,13 +21,29 @@
     <div class="d-flex align-items-center">
       <p-button
         icon="pi pi-bell"
-        [badge]="notificationCount.toString()"
+        [badge]="notificationCount().toString()"
         badgeSeverity="danger"
         [rounded]="true"
         [text]="true"
         ariaLabel="Notifications"
-        styleClass="notification-button me-3">
+        styleClass="notification-button me-3"
+        (onClick)="popover.toggle($event)">
       </p-button>
+
+      <p-popover #popover styleClass="notification-panel">
+        <div *ngIf="notifications().length; else noNotifications">
+          <div *ngFor="let notif of notifications(); trackBy: trackById"
+              class="p-2 border-bottom notification-item"
+              (click)="markAsRead(notif.id)">
+            <strong class="text-primary">{{ notif.title }}</strong>
+            <p class="mb-1">{{ notif.message }}</p>
+            <small class="text-muted">{{ notif.createdAt | date:'short' }}</small>
+          </div>
+        </div>
+        <ng-template #noNotifications>
+          <p class="text-muted m-2">No new notifications</p>
+        </ng-template>
+      </p-popover>
 
       <p-avatar icon="pi pi-user" shape="circle" ariaLabel="Agent profile" class="me-2"></p-avatar>
       <span class="fw-bold">{{ currentAgent?.fullName }}</span>
