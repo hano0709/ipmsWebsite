@@ -91,7 +91,9 @@
                                         (click)="transitionStatus(policy, 'RENEWED')">Renew</button>
                                 <button class="btn btn-sm btn-warning me-1"
                                         (click)="transitionStatus(policy, 'SUSPENDED')">Suspend</button>
-                            } @else if (policy.policyStatus === 'SUSPENDED' || policy.policyStatus === 'RENEWED') {
+                            } 
+                            
+                            @if (policy.policyStatus !== 'CANCELLED') {
                                 <button class="btn btn-sm btn-danger"
                                         (click)="transitionStatus(policy, 'CANCELLED')">Cancel</button>
                             }
