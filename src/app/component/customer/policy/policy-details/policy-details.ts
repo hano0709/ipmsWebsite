@@ -24,9 +24,6 @@ export class PolicyDetails implements OnInit {
   // Signals for state
   policy = signal<Policy | null>(null);
   documents = signal<PolicyDocument[]>([]);
-  auditTrail = signal<PolicyAudit[]>([]);
-  editDialogVisible = signal(false);
-  editPolicyModel: Partial<Policy> = {};
 
   constructor(private route: ActivatedRoute, private http: HttpClient) {}
 
@@ -34,7 +31,6 @@ export class PolicyDetails implements OnInit {
     const policyNumber = this.route.snapshot.paramMap.get('policyNumber');
     if (policyNumber) {
       this.loadPolicy(policyNumber);
-      this.loadAuditTrail(policyNumber);
     }
   }
 
@@ -58,62 +54,6 @@ export class PolicyDetails implements OnInit {
       },
       error: (err) => console.error('Failed to load documents', err)
     });
-  }
-
-  // Load audit trail
-  loadAuditTrail(policyNumber: string): void {
-    this.http.get<PolicyAudit[]>(`${this.server}/policies/${policyNumber}/audit`).subscribe({
-      next: (data) => {
-        // sort ascending by createdAt/changedAt
-        const sorted = [...data].sort((a, b) => {
-          const dateA = new Date(a.createdAt || a.changedAt).getTime();
-          const dateB = new Date(b.createdAt || b.changedAt).getTime();
-          return dateA - dateB;
-        });
-        this.auditTrail.set(sorted);
-      },
-      error: (err) => console.error('Failed to load audit trail', err)
-    });
-  }
-
-  // Status transition actions
-  transition(newStatus: string): void {
-    const policyNumber = this.policy()?.policyNumber;
-    if (!policyNumber) return;
-
-    if (newStatus === 'ACTIVE') {
-      this.http.patch(`${this.server}/policies/${policyNumber}/activate`, {}).subscribe({
-        next: () => {
-          this.loadPolicy(policyNumber),
-          this.loadAuditTrail(policyNumber)
-        },
-        error: (err) => console.error("Failed to activate Policy", err)
-      });
-    } else if (newStatus === 'RENEWED') {
-      this.http.patch(`${this.server}/policies/${policyNumber}/renew`, {}).subscribe({
-        next: () => {
-          this.loadPolicy(policyNumber),
-          this.loadAuditTrail(policyNumber)
-        },
-        error: (err) => console.error("Failed to renew Policy", err)
-      });
-    } else if (newStatus === 'SUSPENDED') {
-      this.http.patch(`${this.server}/policies/${policyNumber}/suspend`, {}).subscribe({
-        next: () => {
-          this.loadPolicy(policyNumber),
-          this.loadAuditTrail(policyNumber)
-        },
-        error: (err) => console.error("Failed to suspend Policy", err)
-      });
-    } else if (newStatus === 'CANCELLED') {
-      this.http.patch(`${this.server}/policies/${policyNumber}/cancel`, {}).subscribe({
-        next: () => {
-          this.loadPolicy(policyNumber),
-          this.loadAuditTrail(policyNumber)
-        },
-        error: (err) => console.error("Failed to cancel Policy", err)
-      });
-    }
   }
 
   // Document actions
@@ -156,37 +96,5 @@ export class PolicyDetails implements OnInit {
     };
 
     input.click();
-  }
-
-  editPolicy(): void {
-    const policy = this.policy();
-    if (!policy || policy.policyStatus !== 'DRAFT') return;
-
-    this.editPolicyModel = {
-      policyType: policy.policyType,
-      sumInsured: policy.sumInsured,
-      startDate: policy.startDate,
-      endDate: policy.endDate,
-      description: policy.description
-    };
-    this.editDialogVisible.set(true);
-  }
-
-  savePolicyEdits(): void {
-    const policyNumber = this.policy()?.policyNumber;
-    if (!policyNumber) return;
-
-    const payload = {
-      ...this.editPolicyModel,
-      customerCode: this.policy()?.customerCode
-    };
-
-    this.http.put(`${this.server}/policies/${policyNumber}`, payload).subscribe({
-      next: () => {
-        this.editDialogVisible.set(false);
-        this.loadPolicy(policyNumber); 
-      },
-      error: (err) => console.error('Failed to save edits', err)
-    });
   }
 }

@@ -67,10 +67,16 @@
       <!-- Breadcrumb -->
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb mb-0">
-          <li *ngFor="let crumb of breadcrumbs; let last = last" class="breadcrumb-item" [class.active]="last">
-            <a *ngIf="!last" [routerLink]="crumb.url">{{ crumb.label }}</a>
-            <span *ngIf="last">{{ crumb.label }}</span>
-          </li>
+          @for (crumb of breadcrumbs; track $index; let last = $last) {
+            <li class="breadcrumb-item" [class.active]="last">
+              @if (!last) {
+                <a [routerLink]="crumb.url">{{ crumb.label }}</a>
+              } 
+              @if (last) {
+                <span>{{ crumb.label }}</span>
+              }
+            </li>
+          }
         </ol>
       </nav>
       <router-outlet></router-outlet>
