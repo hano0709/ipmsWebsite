@@ -98,10 +98,6 @@ export class Agent implements OnInit {
       });
   }
 
-  trackById(index: number, notif: notification): number {
-    return notif.id;
-  }
-
   logout(): void {
     const refreshToken = localStorage.getItem('refreshToken');
     if(refreshToken) {
