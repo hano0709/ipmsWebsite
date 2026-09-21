@@ -24,10 +24,6 @@ export class PoliciesList implements OnInit {
   policies = signal<Policy[]>([]);
   pageSize = signal(10);
   currentPage = signal(0);
-  viewDialogVisible = signal(false);
-  selectedPolicy = signal<Policy | null>(null);
-  editDialogVisible = signal(false);
-  editPolicyData = signal<Partial<Policy>>({});
   filterPolicyType = signal<string | null>(null);
   filterStatus = signal<string | null>(null);
   filterStartDate = signal<string | null>(null);
@@ -89,83 +85,6 @@ export class PoliciesList implements OnInit {
   changePageSize(size: number): void {
     this.pageSize.set(size);
     this.currentPage.set(0);
-  }
-
-
-  viewPolicy(policy: Policy): void {
-    this.selectedPolicy.set(policy);
-    this.viewDialogVisible.set(true);
-  }
-
-  closeViewDialog(): void {
-    this.viewDialogVisible.set(false);
-    this.selectedPolicy.set(null);
-  }
-
-  editPolicy(policy: Policy): void {
-    if (policy.policyStatus === 'DRAFT') {
-      this.selectedPolicy.set(policy);
-      this.editPolicyData.set({
-        policyType: policy.policyType,
-        sumInsured: policy.sumInsured,
-        startDate: policy.startDate,
-        endDate: policy.endDate,
-        description: policy.description
-      });
-      this.editDialogVisible.set(true);
-    }
-  }
-
-  savePolicyEdits(): void {
-    const policyNumber = this.selectedPolicy()?.policyNumber;
-    if(!policyNumber) return;
-
-    const payload = {
-      ...this.editPolicyData(),
-      customerCode: this.selectedPolicy()?.customerCode
-    };
-
-    this.http.put(`${this.server}/policies/${policyNumber}`, payload).subscribe({
-      next: () => {
-        this.editDialogVisible.set(false);
-        this.selectedPolicy.set(null);
-        this.loadPolicies();
-      }
-    })
-  }
-
-  transitionStatus(policy: Policy, newStatus: string): void {
-    const policyNumber = policy.policyNumber;
-
-    if(newStatus === 'ACTIVE') {
-      this.http.patch(`${this.server}/policies/${policyNumber}/activate`, {}).subscribe({
-        next: () => {
-          this.loadPolicies();
-        },
-        error: (err) => console.error("Failed to activate Policy", err)
-      });
-    } else if(newStatus === 'RENEWED') {
-        this.http.patch(`${this.server}/policies/${policyNumber}/renew`, {}).subscribe({
-          next: () => {
-            this.loadPolicies();
-          },
-          error: (err) => console.error("Failed to renew Policy", err)
-        });
-    } else if(newStatus === 'SUSPENDED') {
-        this.http.patch(`${this.server}/policies/${policyNumber}/suspend`, {}).subscribe({
-          next: () => {
-            this.loadPolicies();
-          },
-          error: (err) => console.error("Failed to suspend Policy", err)
-        });
-    } else if(newStatus === 'CANCELLED') {
-        this.http.patch(`${this.server}/policies/${policyNumber}/cancel`, {}).subscribe({
-          next: () => {
-            this.loadPolicies();
-          },
-          error: (err) => console.error("Failed to cancel Policy", err)
-        });
-    }
   }
 
   get filteredPolicies(): Policy[] {
