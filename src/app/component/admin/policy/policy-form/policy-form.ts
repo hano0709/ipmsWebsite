@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, signal, OnInit } from '@angular/core';
+import { Component, signal, OnInit, inject } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators, FormGroup, FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { debounceTime, switchMap } from 'rxjs/operators';
@@ -31,7 +31,9 @@ export class PolicyForm implements OnInit {
   customers$!: Observable<Customer[]>;
   agents$!: Observable<Agent[]>;
 
-  constructor(private fb: FormBuilder, private http: HttpClient, private router: Router) {}
+  fb = inject(FormBuilder);
+  http = inject(HttpClient);
+  router = inject(Router);
 
   ngOnInit(): void {
     this.form = this.fb.group({
