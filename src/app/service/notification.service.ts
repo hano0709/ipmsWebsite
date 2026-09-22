@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { notification } from '../interface/notification';
@@ -7,7 +7,7 @@ import { notification } from '../interface/notification';
 export class NotificationService {
   private readonly server = 'http://localhost:8080/api/v1';
 
-  constructor(private http: HttpClient) {}
+  http = inject(HttpClient);
 
   getNotifications(): Observable<notification[]> {
     return this.http.get<notification[]>(`${this.server}/notifications`);
