@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { Policy } from '../../../../interface/policy';   
@@ -32,7 +32,7 @@ export class PoliciesList implements OnInit {
   filterEndDate = signal<string | null>(null);
   filterSearch = signal<string>("");
 
-  constructor(private http: HttpClient) {}
+  http = inject(HttpClient);
 
   ngOnInit(): void {
     this.loadPolicies();

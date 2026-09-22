@@ -127,8 +127,8 @@
 
             <div class="p-fluid">
                 <div class="mb-3">
-                    <label>Policy Type</label>
-                    <select class="form-select" [(ngModel)]="editPolicyModel.policyType">
+                    <label for="editPolicyType">Policy Type</label>
+                    <select id="editPolicyType" class="form-select" [(ngModel)]="editPolicyModel.policyType">
                         <option value="LIFE">LIFE</option>
                         <option value="HEALTH">HEALTH</option>
                         <option value="MOTOR">MOTOR</option>
@@ -137,23 +137,23 @@
                 </div>
 
                 <div class="mb-3">
-                    <label>Sum Insured</label>
-                    <input type="number" class="form-control" [(ngModel)]="editPolicyModel.sumInsured">
+                    <label for="editSumInsured">Sum Insured</label>
+                    <input id="editSumInsured" type="number" class="form-control" [(ngModel)]="editPolicyModel.sumInsured">
                 </div>
 
                 <div class="mb-3">
-                    <label>Start Date</label>
-                    <input type="date" class="form-control" [(ngModel)]="editPolicyModel.startDate">
+                    <label for="editStartDate">Start Date</label>
+                    <input id="editStartDate" type="date" class="form-control" [(ngModel)]="editPolicyModel.startDate">
                 </div>
 
                 <div class="mb-3">
-                    <label>End Date</label>
-                    <input type="date" class="form-control" [(ngModel)]="editPolicyModel.endDate">
+                    <label for="editEndDate">End Date</label>
+                    <input id="editEndDate" type="date" class="form-control" [(ngModel)]="editPolicyModel.endDate">
                 </div>
 
                 <div class="mb-3">
-                    <label>Description</label>
-                    <textarea class="form-control" [(ngModel)]="editPolicyModel.description"></textarea>
+                    <label for="editDescription">Description</label>
+                    <textarea id="editDescription" class="form-control" [(ngModel)]="editPolicyModel.description"></textarea>
                 </div>
             </div>
 
