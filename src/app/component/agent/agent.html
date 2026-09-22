@@ -34,7 +34,9 @@
         @if (notifications().length) {
           @for (notif of notifications(); track notif.id) {
             <div class="p-2 border-bottom notification-item"
-                (click)="markAsRead(notif.id)">
+                (click)="markAsRead(notif.id)"
+                (keyup.enter)="markAsRead(notif.id)"
+                tabindex="0">
               <strong class="text-primary">{{ notif.title }}</strong>
               <p class="mb-1">{{ notif.message }}</p>
               <small class="text-muted">{{ notif.createdAt | date:'short' }}</small>
@@ -77,7 +79,7 @@
     <div class="offcanvas offcanvas-start bg-dark text-white" tabindex="-1" id="sidebarMenu">
       <div class="offcanvas-header">
         <h4 class="mb-0">IPMS</h4>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+        <button aria-label="close-sidebar" type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
       </div>
       <div class="offcanvas-body d-flex flex-column justify-content-between">
         <ul class="nav flex-column">
@@ -86,7 +88,12 @@
           <li class="nav-item"><a class="nav-link text-white" routerLink="/agent/customers" routerLinkActive="active">Customers<i class="bi bi-people ms-2"></i></a></li>
           <li class="nav-item"><a class="nav-link text-white" routerLink="/agent/notifications" routerLinkActive="active">Notifications <i class="bi bi-bell ms-2"></i></a></li>
         </ul>
-        <a class="nav-link text-danger fw-bold" (click)="logout()">Logout <i class="bi bi-box-arrow-right ms-2"></i></a>
+        <a class="nav-link text-danger fw-bold" 
+          (click)="logout()"
+          (keyup.enter)="logout()"
+          tabindex="0">
+            Logout <i class="bi bi-box-arrow-right ms-2"></i>
+        </a>
       </div>
     </div>
 
