@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Customer } from '../../../interface/customer';
 import { CommonModule } from '@angular/common';
@@ -6,7 +6,9 @@ import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { DrawerModule } from 'primeng/drawer';
 import { Agent } from '../../../interface/agent';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
+
+type EditableCustomerField = 'fullName' | 'dateOfBirth' | 'gender' | 'phone' | 'address' | 'kycStatus';
 
 @Component({
   selector: 'app-customers-agents',
@@ -34,7 +36,7 @@ export class CustomersAgentsComponent implements OnInit {
   hasNextPage = signal(true);
   displayDialog = false;
   editDialog = false;
-  editedFields: Partial<Customer> = {}
+  editedFields: Partial<Customer> = {};
   addPanelVisible = false;
   entityType: 'CUSTOMER' | 'AGENT' = 'CUSTOMER';
   newCustomer: Partial<Customer> = {
@@ -51,7 +53,8 @@ export class CustomersAgentsComponent implements OnInit {
   newEmail = '';
   newPassword = '';
 
-  constructor(private http: HttpClient, private route: ActivatedRoute, private router: Router) {}
+  private http = inject(HttpClient);
+  private router = inject(Router);
 
   ngOnInit(): void {
     this.loadCustomers();
@@ -66,7 +69,7 @@ export class CustomersAgentsComponent implements OnInit {
     }
   }
 
-  loadCustomers(page: number = 0): void {
+  loadCustomers(page = 0): void {
     let url = `${this.server}/customers?page=${page}&size=${this.pageSize}`;
     if(this.filterKyc) {
       url += `&kycStatus=${this.filterKyc}`;
@@ -119,11 +122,11 @@ export class CustomersAgentsComponent implements OnInit {
     this.editedFields = {};
   }
 
-  onFieldChange(field: keyof Customer, value: string): void {
+  onFieldChange(field: EditableCustomerField, value: string): void {
     if(!this.selectedCustomer) return;
 
-    if((this.selectedCustomer as any)[field] !== value){
-      this.editedFields[field] = value as any;
+    if((this.selectedCustomer)[field] !== value){
+      this.editedFields[field] = value;
     } else {
       delete this.editedFields[field];
     }
@@ -132,10 +135,10 @@ export class CustomersAgentsComponent implements OnInit {
   saveCustomer(): void{
     if(!this.selectedCustomer) return;
 
-    const payload: any = {customerCode: this.selectedCustomer.customerCode};
+    const payload: Partial<Customer> = {customerCode: this.selectedCustomer.customerCode};
 
-    for(const key of Object.keys(this.editedFields)){
-      payload[key] = (this.editedFields as any)[key];
+    for(const key of Object.keys(this.editedFields) as EditableCustomerField[]){
+      payload[key] = this.editedFields[key];
     }
 
     this.http.put(`${this.server}/customers`, payload).subscribe ({
@@ -156,7 +159,7 @@ export class CustomersAgentsComponent implements OnInit {
 
     // Optimistic update on frontend
     customer.kycStatus = newStatus;
-    const payload: any = {
+    const payload: Partial<Customer> = {
       customerCode: customer.customerCode,
       kycStatus: customer.kycStatus
     }
@@ -182,7 +185,7 @@ export class CustomersAgentsComponent implements OnInit {
 
   saveNewEntity(): void {
     if(this.entityType === 'CUSTOMER'){
-      const payload: any = {
+      const payload = {
         ...this.newCustomer,
         email: this.newEmail,
         password: this.newPassword
@@ -196,7 +199,7 @@ export class CustomersAgentsComponent implements OnInit {
         error: (err) => console.error('Failed to create customer', err)
       });
     } else {
-      const payload: any = {
+      const payload = {
         ...this.newAgent,
         email: this.newEmail,
         password: this.newPassword
@@ -207,7 +210,7 @@ export class CustomersAgentsComponent implements OnInit {
           this.closeAddPanel();
           this.loadCustomers(0);
         },
-        error: (err) => console.error('Failed to create Agent')
+        error: (err) => console.error('Failed to create Agent', err)
       });
     }
   }
