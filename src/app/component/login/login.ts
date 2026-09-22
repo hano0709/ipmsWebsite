@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { UserService } from '../../service/user.service';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -17,6 +17,7 @@ export class Login {
 
   userService = inject(UserService);
   router = inject(Router);
+  cdr = inject(ChangeDetectorRef);
 
   togglePassword(){
     this.showPassword = !this.showPassword;
@@ -39,6 +40,7 @@ export class Login {
       error: (err) => {
         this.errorMessage = err;
         console.error('Login Failed: ', err);
+        this.cdr.detectChanges();
       }
     });
   }

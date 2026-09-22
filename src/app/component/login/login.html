@@ -16,7 +16,6 @@
           [(ngModel)]="email"
           name="email"
         >
-        <div class="invalid-feedback">Invalid email address</div>
       </div>
 
       <!-- Password -->
@@ -36,7 +35,11 @@
             {{ showPassword ? 'Hide' : 'Show' }} 
           </button>
         </div>
-        <div class="invalid-feedback">Invalid password or account locked</div>
+        @if (errorMessage) {
+          <div class="invalid-feedback d-block">
+            {{ errorMessage }}
+          </div>
+        }
       </div>
 
       <!-- CTA -->

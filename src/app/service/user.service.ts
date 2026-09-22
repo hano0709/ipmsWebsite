@@ -28,13 +28,14 @@ export class UserService {
     if (errorResponse.error instanceof ErrorEvent) {
       errorMessage = `A client error occured -${errorResponse.error.message}`;
     } else {
-      if (errorResponse.error.reason) {
-        errorMessage = errorResponse.error.reason;
+      if (errorResponse.error?.error) {
+        errorMessage = errorResponse.error.error;
       } else {
         errorMessage = `Server error - Error Status ${errorResponse.status}`;
       }
     }
 
+    console.log(errorMessage);
     return throwError(() => errorMessage);
   }
 
