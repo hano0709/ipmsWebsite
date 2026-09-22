@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
@@ -28,7 +28,8 @@ export class PolicyDetails implements OnInit {
   editDialogVisible = signal(false);
   editPolicyModel: Partial<Policy> = {};
 
-  constructor(private route: ActivatedRoute, private http: HttpClient) {}
+  route = inject(ActivatedRoute);
+  http = inject(HttpClient);
 
   ngOnInit(): void {
     const policyNumber = this.route.snapshot.paramMap.get('policyNumber');
@@ -84,7 +85,7 @@ export class PolicyDetails implements OnInit {
     if (newStatus === 'ACTIVE') {
       this.http.patch(`${this.server}/policies/${policyNumber}/activate`, {}).subscribe({
         next: () => {
-          this.loadPolicy(policyNumber),
+          this.loadPolicy(policyNumber);
           this.loadAuditTrail(policyNumber)
         },
         error: (err) => console.error("Failed to activate Policy", err)
@@ -92,7 +93,7 @@ export class PolicyDetails implements OnInit {
     } else if (newStatus === 'RENEWED') {
       this.http.patch(`${this.server}/policies/${policyNumber}/renew`, {}).subscribe({
         next: () => {
-          this.loadPolicy(policyNumber),
+          this.loadPolicy(policyNumber);
           this.loadAuditTrail(policyNumber)
         },
         error: (err) => console.error("Failed to renew Policy", err)
@@ -100,7 +101,7 @@ export class PolicyDetails implements OnInit {
     } else if (newStatus === 'SUSPENDED') {
       this.http.patch(`${this.server}/policies/${policyNumber}/suspend`, {}).subscribe({
         next: () => {
-          this.loadPolicy(policyNumber),
+          this.loadPolicy(policyNumber);
           this.loadAuditTrail(policyNumber)
         },
         error: (err) => console.error("Failed to suspend Policy", err)
@@ -108,7 +109,7 @@ export class PolicyDetails implements OnInit {
     } else if (newStatus === 'CANCELLED') {
       this.http.patch(`${this.server}/policies/${policyNumber}/cancel`, {}).subscribe({
         next: () => {
-          this.loadPolicy(policyNumber),
+          this.loadPolicy(policyNumber);
           this.loadAuditTrail(policyNumber)
         },
         error: (err) => console.error("Failed to cancel Policy", err)
@@ -151,7 +152,7 @@ export class PolicyDetails implements OnInit {
         next: () => {
           this.loadDocuments(id);
         },
-        error: (err) => console.error('Failed to upload Doc')
+        error: (err) => console.error('Failed to upload Doc', err)
       });
     };
 
