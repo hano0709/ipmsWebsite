@@ -1,31 +1,27 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { Policy } from '../../../../interface/policy';
 import { PolicyDocument } from '../../../../interface/policyDocument';
-import { PolicyAudit } from '../../../../interface/policyAudit';
 import { DialogModule } from 'primeng/dialog';
 import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-policy-details',
-  imports: [
-    CommonModule,
-    DialogModule,
-    FormsModule
-  ],
+  imports: [CommonModule, DialogModule, FormsModule],
   templateUrl: './policy-details.html',
-  styleUrls: ['./policy-details.css']
+  styleUrls: ['./policy-details.css'],
 })
 export class PolicyDetails implements OnInit {
+  private route = inject(ActivatedRoute);
+  private http = inject(HttpClient);
+
   private readonly server = 'http://localhost:8080/api/v1';
 
   // Signals for state
   policy = signal<Policy | null>(null);
   documents = signal<PolicyDocument[]>([]);
-
-  constructor(private route: ActivatedRoute, private http: HttpClient) {}
 
   ngOnInit(): void {
     const policyNumber = this.route.snapshot.paramMap.get('policyNumber');
@@ -39,9 +35,9 @@ export class PolicyDetails implements OnInit {
     this.http.get<Policy>(`${this.server}/policies/${policyNumber}`).subscribe({
       next: (data) => {
         this.policy.set(data);
-        this.loadDocuments(data.id);   // pass the id here
+        this.loadDocuments(data.id); // pass the id here
       },
-      error: (err) => console.error('Failed to load policy details', err)
+      error: (err) => console.error('Failed to load policy details', err),
     });
   }
 
@@ -52,7 +48,7 @@ export class PolicyDetails implements OnInit {
         this.documents.set(data);
         console.log('Documents loaded:', data);
       },
-      error: (err) => console.error('Failed to load documents', err)
+      error: (err) => console.error('Failed to load documents', err),
     });
   }
 
@@ -74,7 +70,7 @@ export class PolicyDetails implements OnInit {
 
   uploadDoc(): void {
     const id = this.policy()?.id;
-    if(!id) return;
+    if (!id) return;
 
     const input = document.createElement('input');
     input.type = 'file';
@@ -82,17 +78,19 @@ export class PolicyDetails implements OnInit {
 
     input.onchange = () => {
       const file = (input.files && input.files[0]) || null;
-      if(!file) return;
+      if (!file) return;
 
       const formData = new FormData();
       formData.append('file', file);
 
-      this.http.post(`${this.server}/policies/${id}/documents`, formData, {responseType: 'text'}).subscribe({
-        next: () => {
-          this.loadDocuments(id);
-        },
-        error: (err) => console.error('Failed to upload Doc')
-      });
+      this.http
+        .post(`${this.server}/policies/${id}/documents`, formData, { responseType: 'text' })
+        .subscribe({
+          next: () => {
+            this.loadDocuments(id);
+          },
+          error: (err) => console.error('Failed to upload Doc'),
+        });
     };
 
     input.click();
