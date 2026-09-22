@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { ChangeDetectorRef, Component, OnInit, signal } from '@angular/core';
-import { Router, ActivatedRoute, NavigationEnd, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { Router, ActivatedRoute, NavigationEnd, RouterLink, RouterLinkActive, RouterOutlet, UrlSegment } from '@angular/router';
 import { Avatar } from 'primeng/avatar';
 import { Button } from 'primeng/button';
 import { filter } from 'rxjs/operators';
@@ -28,10 +28,10 @@ export class Customer implements OnInit {
   private readonly server: string = 'http://localhost:8080/api/v1';
   customer: customerInterface | null = null;
 
-  constructor(private router: Router, 
-              private route: ActivatedRoute, 
-              private http: HttpClient,
-              private cdr: ChangeDetectorRef) {}
+  router = inject(Router);
+  route = inject(ActivatedRoute);
+  http = inject(HttpClient);
+  cdr = inject(ChangeDetectorRef);
 
   ngOnInit(): void {
     this.loadCustomer();
@@ -62,15 +62,15 @@ export class Customer implements OnInit {
   private buildBreadcrumbs(): void {
     const crumbs: { label: string, url: string }[] = [];
     let currentRoute = this.route.root;
-    let url = '/admin';
+    let url = '/customer';
 
     while (currentRoute.firstChild) {
       currentRoute = currentRoute.firstChild;
       if (currentRoute.snapshot.url.length) {
-        url += '/' + currentRoute.snapshot.url.map((segment: any) => segment.path).join('/');
+        url += '/' + currentRoute.snapshot.url.map((segment: UrlSegment) => segment.path).join('/');
         crumbs.push({
           label: currentRoute.snapshot.data['breadcrumb'] || currentRoute.snapshot.url[0].path,
-          url: '/admin' + url
+          url: '/customer' + url
         });
       }
     }

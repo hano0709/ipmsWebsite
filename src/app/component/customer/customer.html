@@ -50,7 +50,7 @@
     <div class="offcanvas offcanvas-start bg-dark text-white" tabindex="-1" id="sidebarMenu">
       <div class="offcanvas-header">
         <h4 class="mb-0">IPMS</h4>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+        <button aria-label="sidebar-button" type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
       </div>
       <div class="offcanvas-body d-flex flex-column justify-content-between">
         <ul class="nav flex-column">
@@ -58,7 +58,9 @@
           <li class="nav-item"><a class="nav-link text-white" routerLink="/customer/policies" routerLinkActive="active">Policies <i class="bi bi-file-earmark-text ms-2"></i></a></li>
           <li class="nav-item"><a class="nav-link text-white" routerLink="/customer/notifications" routerLinkActive="active">Notifications <i class="bi bi-bell ms-2"></i></a></li>
         </ul>
-        <a class="nav-link text-danger fw-bold" (click)="logout()">Logout <i class="bi bi-box-arrow-right ms-2"></i></a>
+        <a class="nav-link text-danger fw-bold" (click)="logout()" (keyup)="logout()" tabindex="0">
+           Logout <i class="bi bi-box-arrow-right ms-2"></i>
+        </a>
       </div>
     </div>
 
