@@ -1,7 +1,7 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { Policy } from '../../../../interface/policy';   
+import { Policy } from '../../../../interface/policy';
 import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { RouterModule } from '@angular/router';
@@ -9,16 +9,13 @@ import { Customer } from '../../../../interface/customer';
 
 @Component({
   selector: 'app-policies-list',
-  imports: [
-    CommonModule,
-    FormsModule,
-    DialogModule,
-    RouterModule
-  ],
+  imports: [CommonModule, FormsModule, DialogModule, RouterModule],
   templateUrl: './policies-list.html',
-  styleUrl: './policies-list.css'
+  styleUrl: './policies-list.css',
 })
 export class PoliciesList implements OnInit {
+  private http = inject(HttpClient);
+
   private readonly server = 'http://localhost:8080/api/v1';
 
   policies = signal<Policy[]>([]);
@@ -31,30 +28,30 @@ export class PoliciesList implements OnInit {
   filterSearch = signal<string>("");
   customer: Customer | null = null;
 
-  constructor(private http: HttpClient) {}
-
   ngOnInit(): void {
     this.loadCustomerProfile();
   }
-  
+
   private loadCustomerProfile(): void {
     this.http.get<Customer>(`${this.server}/customers/me`).subscribe({
       next: (cust) => {
         this.customer = cust;
         this.loadPolicies();
       },
-      error: (err) => {console.error('Customer Loading Failed', err)}
+      error: (err) => {
+        console.error('Customer Loading Failed', err);
+      },
     });
   }
 
   loadPolicies(): void {
     const id = this.customer?.id;
-    
+
     this.http.get<Policy[]>(`${this.server}/customers/${id}/policies`).subscribe({
       next: (data) => {
-        this.policies.set(data)
+        this.policies.set(data);
       },
-      error: (err) => console.error('Failed to load policies', err)
+      error: (err) => console.error('Failed to load policies', err),
     });
   }
 
@@ -70,7 +67,6 @@ export class PoliciesList implements OnInit {
     }
   }
 
-
   prevPage(): void {
     if (this.currentPage() > 0) {
       this.currentPage.set(this.currentPage() - 1);
@@ -81,15 +77,14 @@ export class PoliciesList implements OnInit {
     return Math.ceil(this.policies().length / this.pageSize()) - 1;
   }
 
-
   changePageSize(size: number): void {
     this.pageSize.set(size);
     this.currentPage.set(0);
   }
 
   get filteredPolicies(): Policy[] {
-    return this.policies().filter(p => {
-      if(this.filterPolicyType() && p.policyType !== this.filterPolicyType()){
+    return this.policies().filter((p) => {
+      if (this.filterPolicyType() && p.policyType !== this.filterPolicyType()) {
         return false;
       }
 
@@ -101,10 +96,11 @@ export class PoliciesList implements OnInit {
       const end = this.filterEndDate() ? new Date(this.filterEndDate()!) : null;
       const policyStart = new Date(p.startDate);
       const policyEnd = new Date(p.endDate);
-      if(start && policyStart < start) return false;
-      if(end && policyEnd > end) return false;
+      if (start && policyStart < start) return false;
+      if (end && policyEnd > end) return false;
 
-      if(this.filterSearch() &&
+      if (
+        this.filterSearch() &&
         !p.policyNumber.toLowerCase().includes(this.filterSearch().toLowerCase()) &&
         !p.customerCode.toLowerCase().includes(this.filterSearch().toLowerCase())
       ) {

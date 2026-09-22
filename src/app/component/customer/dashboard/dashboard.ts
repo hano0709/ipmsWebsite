@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { Policy } from '../../../interface/policy';
@@ -9,25 +9,20 @@ import { Customer } from '../../../interface/customer';
 @Component({
   selector: 'app-customer-dashboard',
   standalone: true,
-  imports: [
-    CommonModule,
-    ButtonModule,
-    RouterLink
-  ],
+  imports: [CommonModule, ButtonModule, RouterLink],
   templateUrl: './dashboard.html',
-  styleUrl: './dashboard.css'
+  styleUrl: './dashboard.css',
 })
 export class Dashboard implements OnInit {
-  private readonly server = 'http://localhost:8080/api/v1';
+  private http = inject(HttpClient);
 
+  private readonly server = 'http://localhost:8080/api/v1';
 
   policies = signal<Policy[]>([]);
   myPolicies = signal<number>(0);
   myActivePolicies = signal<number>(0);
   renewalDue = signal<number>(0);
   customer: Customer | null = null;
-
-  constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
     this.loadCustomerProfile();
@@ -39,7 +34,9 @@ export class Dashboard implements OnInit {
         this.customer = cust;
         this.loadPolicies();
       },
-      error: (err) => {console.error('Customer Loading Failed', err)}
+      error: (err) => {
+        console.error('Customer Loading Failed', err);
+      },
     });
   }
 
