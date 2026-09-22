@@ -6,7 +6,7 @@
         <div class="card-header fw-bold">Step 1 — Basic Details</div>
         <div class="card-body">
           <div class="mb-3">
-            <label class="form-label">Policy Type</label>
+            <legend class="form-label">Policy Type</legend>
             <div class="d-flex gap-3">
               <div class="form-check">
                 <input class="form-check-input" type="radio" formControlName="policyType" value="LIFE" id="policyLife">
@@ -30,8 +30,8 @@
           </div>
   
           <div class="mb-3">
-            <label class="form-label me-2">Customer</label>
-            <p-autoComplete formControlName="customerCode" [suggestions]="(customers$ | async) ?? []" [dropdown]="true"
+            <label class="form-label me-2" for="customer">Customer</label>
+            <p-autoComplete id="customer" formControlName="customerCode" [suggestions]="(customers$ | async) ?? []" [dropdown]="true"
               (onSelect)="onCustomerSelected($event)">
               <ng-template let-cust pTemplate="item">
                 {{ cust.customerCode }} — {{ cust.fullName }} (DOB: {{ cust.dateOfBirth | date:'mediumDate' }})
@@ -40,8 +40,8 @@
           </div>
   
           <div class="mb-3 d-flex align-items-center">
-            <label class="form-label me-3">Agent</label>
-            <span class="fw-bold">{{ currentAgent?.agentCode }} — {{ currentAgent?.fullName }}</span>
+            <label class="form-label me-3" for="agent">Agent</label>
+            <span id="agnet" class="fw-bold">{{ currentAgent?.agentCode }} — {{ currentAgent?.fullName }}</span>
           </div>
   
   
@@ -56,20 +56,20 @@
         <div class="card-header fw-bold">Step 2 — Coverage Details</div>
         <div class="card-body">
           <div class="mb-3">
-            <label class="form-label">Sum Insured</label>
-            <input type="number" class="form-control" formControlName="sumInsured">
+            <label class="form-label" for="sumInsured">Sum Insured</label>
+            <input id="sumInsured" type="number" class="form-control" formControlName="sumInsured">
           </div>
           <div class="mb-3">
-            <label class="form-label">Start Date</label>
-            <input type="date" class="form-control" formControlName="startDate">
+            <label class="form-label" for="startDate">Start Date</label>
+            <input id="startDate" type="date" class="form-control" formControlName="startDate">
           </div>
           <div class="mb-3">
-            <label class="form-label">End Date</label>
-            <input type="date" class="form-control" formControlName="endDate">
+            <label class="form-label" for="endDate">End Date</label>
+            <input id="endDate" type="date" class="form-control" formControlName="endDate">
           </div>
           <div class="mb-3">
-            <label class="form-label">Description</label>
-            <textarea class="form-control" formControlName="description"></textarea>
+            <label class="form-label" for="description">Description</label>
+            <textarea id="description" class="form-control" formControlName="description"></textarea>
           </div>
   
           <button class="btn btn-secondary me-2" (click)="prevStep()">Back</button>
