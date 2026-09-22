@@ -1,10 +1,12 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Customer } from '../../../interface/customer';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { DrawerModule } from 'primeng/drawer';
+
+type EditableCustomerField = 'fullName' | 'dateOfBirth' | 'gender' | 'phone' | 'address' | 'kycStatus';
 
 @Component({
   selector: 'app-agent-customers',
@@ -43,13 +45,13 @@ export class Customers implements OnInit {
   newEmail = '';
   newPassword = '';
 
-  constructor(private http: HttpClient) {}
+  http = inject(HttpClient);
 
   ngOnInit(): void {
     this.loadCustomers();
   }
 
-  loadCustomers(page: number = 0): void {
+  loadCustomers(page = 0): void {
     let url = `${this.server}/customers?page=${page}&size=${this.pageSize}`;
     if (this.filterKyc) {
       url += `&kycStatus=${this.filterKyc}`;
@@ -102,11 +104,11 @@ export class Customers implements OnInit {
     this.editedFields = {};
   }
 
-  onFieldChange(field: keyof Customer, value: string): void {
+  onFieldChange(field: EditableCustomerField, value: string): void {
     if (!this.selectedCustomer) return;
 
-    if ((this.selectedCustomer as any)[field] !== value) {
-      this.editedFields[field] = value as any;
+    if ((this.selectedCustomer)[field] !== value) {
+      this.editedFields[field] = value;
     } else {
       delete this.editedFields[field];
     }
@@ -115,10 +117,10 @@ export class Customers implements OnInit {
   saveCustomer(): void {
     if (!this.selectedCustomer) return;
 
-    const payload: any = { customerCode: this.selectedCustomer.customerCode };
+    const payload: Partial<Customer> = { customerCode: this.selectedCustomer.customerCode };
 
-    for (const key of Object.keys(this.editedFields)) {
-      payload[key] = (this.editedFields as any)[key];
+    for (const key of Object.keys(this.editedFields) as EditableCustomerField[]) {
+      payload[key] = this.editedFields[key];
     }
 
     this.http.put(`${this.server}/customers`, payload).subscribe({
@@ -139,7 +141,7 @@ export class Customers implements OnInit {
 
     // Optimistic update
     customer.kycStatus = newStatus;
-    const payload: any = {
+    const payload: Partial<Customer> = {
       customerCode: customer.customerCode,
       kycStatus: customer.kycStatus
     };
@@ -160,7 +162,7 @@ export class Customers implements OnInit {
   }
 
   saveNewCustomer(): void {
-    const payload: any = {
+    const payload = {
       ...this.newCustomer,
       email: this.newEmail,
       password: this.newPassword
