@@ -1,5 +1,5 @@
-import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
 import { catchError, Observable, tap, throwError } from 'rxjs';
 import { User } from '../interface/user';
 
@@ -9,9 +9,9 @@ import { User } from '../interface/user';
 export class UserService {
   private readonly server: string = 'http://localhost:8080/api/v1';
 
-  constructor(private http: HttpClient) { }
+  http = inject(HttpClient);
 
-  login(email: string, password: string): Observable<any> {
+  login(email: string, password: string): Observable<User> {
     return this.http.post<User>( 
       `${this.server}/auth/login`, { email, password }
     ).pipe(
