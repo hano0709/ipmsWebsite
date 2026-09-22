@@ -3,5 +3,5 @@ export interface User {
     refreshToken: string;
     tokenType: string;
     expiresIn: number
-    role: String;
+    role: string;
 }
