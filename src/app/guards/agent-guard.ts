@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
 import { UserService } from '../service/user.service'; 
 
@@ -6,7 +6,9 @@ import { UserService } from '../service/user.service';
   providedIn: 'root'
 })
 export class AgentGuard implements CanActivate {
-  constructor(private userService: UserService, private router: Router) {}
+
+  userService = inject(UserService);
+  router = inject(Router);
 
   canActivate(): boolean {
     const user = this.userService.getCurrentUser(); 
