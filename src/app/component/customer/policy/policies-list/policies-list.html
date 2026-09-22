@@ -88,8 +88,8 @@
 <!-- Pagination controls -->
 <div class="d-flex justify-content-between align-items-center mt-3">
     <div>
-        <label>Rows per page:</label>
-        <select class="form-select d-inline-block w-auto ms-2" [ngModel]="pageSize()"
+        <label for="page-size">Rows per page:</label>
+        <select id="page-size" class="form-select d-inline-block w-auto ms-2" [ngModel]="pageSize()"
             (ngModelChange)="changePageSize($event)">
             <option [ngValue]="10">10</option>
             <option [ngValue]="25">25</option>

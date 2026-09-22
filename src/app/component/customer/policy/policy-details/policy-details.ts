@@ -89,7 +89,7 @@ export class PolicyDetails implements OnInit {
           next: () => {
             this.loadDocuments(id);
           },
-          error: (err) => console.error('Failed to upload Doc'),
+          error: (err) => console.error('Failed to upload Doc', err),
         });
     };
 
