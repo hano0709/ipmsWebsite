@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { UserService } from '../../service/user.service';
-import { FormsModule, NgForm } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
 @Component({
@@ -15,7 +15,8 @@ export class Login {
   showPassword = false;
   errorMessage = '';
 
-  constructor(private userService: UserService, private router: Router) {}
+  userService = inject(UserService);
+  router = inject(Router);
 
   togglePassword(){
     this.showPassword = !this.showPassword;
