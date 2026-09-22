@@ -1,7 +1,7 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { Policy } from '../../../../interface/policy';   
+import { Policy } from '../../../../interface/policy';
 import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { RouterModule } from '@angular/router';
@@ -9,25 +9,18 @@ import { Customer } from '../../../../interface/customer';
 
 @Component({
   selector: 'app-policies-list',
-  imports: [
-    CommonModule,
-    FormsModule,
-    DialogModule,
-    RouterModule
-  ],
+  imports: [CommonModule, FormsModule, DialogModule, RouterModule],
   templateUrl: './policies-list.html',
-  styleUrl: './policies-list.css'
+  styleUrl: './policies-list.css',
 })
 export class PoliciesList implements OnInit {
+  private http = inject(HttpClient);
+
   private readonly server = 'http://localhost:8080/api/v1';
 
   policies = signal<Policy[]>([]);
   pageSize = signal(10);
   currentPage = signal(0);
-  viewDialogVisible = signal(false);
-  selectedPolicy = signal<Policy | null>(null);
-  editDialogVisible = signal(false);
-  editPolicyData = signal<Partial<Policy>>({});
   filterPolicyType = signal<string | null>(null);
   filterStatus = signal<string | null>(null);
   filterStartDate = signal<string | null>(null);
@@ -35,30 +28,30 @@ export class PoliciesList implements OnInit {
   filterSearch = signal<string>("");
   customer: Customer | null = null;
 
-  constructor(private http: HttpClient) {}
-
   ngOnInit(): void {
     this.loadCustomerProfile();
   }
-  
+
   private loadCustomerProfile(): void {
     this.http.get<Customer>(`${this.server}/customers/me`).subscribe({
       next: (cust) => {
         this.customer = cust;
         this.loadPolicies();
       },
-      error: (err) => {console.error('Customer Loading Failed', err)}
+      error: (err) => {
+        console.error('Customer Loading Failed', err);
+      },
     });
   }
 
   loadPolicies(): void {
     const id = this.customer?.id;
-    
+
     this.http.get<Policy[]>(`${this.server}/customers/${id}/policies`).subscribe({
       next: (data) => {
-        this.policies.set(data)
+        this.policies.set(data);
       },
-      error: (err) => console.error('Failed to load policies', err)
+      error: (err) => console.error('Failed to load policies', err),
     });
   }
 
@@ -74,7 +67,6 @@ export class PoliciesList implements OnInit {
     }
   }
 
-
   prevPage(): void {
     if (this.currentPage() > 0) {
       this.currentPage.set(this.currentPage() - 1);
@@ -85,92 +77,14 @@ export class PoliciesList implements OnInit {
     return Math.ceil(this.policies().length / this.pageSize()) - 1;
   }
 
-
   changePageSize(size: number): void {
     this.pageSize.set(size);
     this.currentPage.set(0);
   }
 
-
-  viewPolicy(policy: Policy): void {
-    this.selectedPolicy.set(policy);
-    this.viewDialogVisible.set(true);
-  }
-
-  closeViewDialog(): void {
-    this.viewDialogVisible.set(false);
-    this.selectedPolicy.set(null);
-  }
-
-  editPolicy(policy: Policy): void {
-    if (policy.policyStatus === 'DRAFT') {
-      this.selectedPolicy.set(policy);
-      this.editPolicyData.set({
-        policyType: policy.policyType,
-        sumInsured: policy.sumInsured,
-        startDate: policy.startDate,
-        endDate: policy.endDate,
-        description: policy.description
-      });
-      this.editDialogVisible.set(true);
-    }
-  }
-
-  savePolicyEdits(): void {
-    const policyNumber = this.selectedPolicy()?.policyNumber;
-    if(!policyNumber) return;
-
-    const payload = {
-      ...this.editPolicyData(),
-      customerCode: this.selectedPolicy()?.customerCode
-    };
-
-    this.http.put(`${this.server}/policies/${policyNumber}`, payload).subscribe({
-      next: () => {
-        this.editDialogVisible.set(false);
-        this.selectedPolicy.set(null);
-        this.loadPolicies();
-      }
-    })
-  }
-
-  transitionStatus(policy: Policy, newStatus: string): void {
-    const policyNumber = policy.policyNumber;
-
-    if(newStatus === 'ACTIVE') {
-      this.http.patch(`${this.server}/policies/${policyNumber}/activate`, {}).subscribe({
-        next: () => {
-          this.loadPolicies();
-        },
-        error: (err) => console.error("Failed to activate Policy", err)
-      });
-    } else if(newStatus === 'RENEWED') {
-        this.http.patch(`${this.server}/policies/${policyNumber}/renew`, {}).subscribe({
-          next: () => {
-            this.loadPolicies();
-          },
-          error: (err) => console.error("Failed to renew Policy", err)
-        });
-    } else if(newStatus === 'SUSPENDED') {
-        this.http.patch(`${this.server}/policies/${policyNumber}/suspend`, {}).subscribe({
-          next: () => {
-            this.loadPolicies();
-          },
-          error: (err) => console.error("Failed to suspend Policy", err)
-        });
-    } else if(newStatus === 'CANCELLED') {
-        this.http.patch(`${this.server}/policies/${policyNumber}/cancel`, {}).subscribe({
-          next: () => {
-            this.loadPolicies();
-          },
-          error: (err) => console.error("Failed to cancel Policy", err)
-        });
-    }
-  }
-
   get filteredPolicies(): Policy[] {
-    return this.policies().filter(p => {
-      if(this.filterPolicyType() && p.policyType !== this.filterPolicyType()){
+    return this.policies().filter((p) => {
+      if (this.filterPolicyType() && p.policyType !== this.filterPolicyType()) {
         return false;
       }
 
@@ -182,10 +96,11 @@ export class PoliciesList implements OnInit {
       const end = this.filterEndDate() ? new Date(this.filterEndDate()!) : null;
       const policyStart = new Date(p.startDate);
       const policyEnd = new Date(p.endDate);
-      if(start && policyStart < start) return false;
-      if(end && policyEnd > end) return false;
+      if (start && policyStart < start) return false;
+      if (end && policyEnd > end) return false;
 
-      if(this.filterSearch() &&
+      if (
+        this.filterSearch() &&
         !p.policyNumber.toLowerCase().includes(this.filterSearch().toLowerCase()) &&
         !p.customerCode.toLowerCase().includes(this.filterSearch().toLowerCase())
       ) {

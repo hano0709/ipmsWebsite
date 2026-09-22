@@ -57,41 +57,44 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let policy of paginatedPolicies">
-                    <td>{{ policy.policyNumber }}</td>
-                    <td>{{ policy.policyType }}</td>
-                    <td>{{ policy.customerCode }}</td>
-                    <td>{{ policy.agentCode }}</td>
-                    <td>{{ policy.premiumAmount | currency:'INR' }}</td>
-                    <td>{{ policy.startDate | date }}</td>
-                    <td>{{ policy.endDate | date }}</td>
-                    <td>
-                        <span class="badge" [ngClass]="{
-                    'bg-success': policy.policyStatus === 'ACTIVE',
-                    'bg-warning text-dark': policy.policyStatus === 'DRAFT',
-                    'bg-warning': policy.policyStatus === 'SUSPENDED',
-                    'bg-danger': policy.policyStatus === 'CANCELLED' || policy.policyStatus === 'EXPIRED',
-                    'bg-primary': policy.policyStatus === 'RENEWED'
-                  }">
-                            {{ policy.policyStatus }}
-                        </span>
-                    </td>
-                    <td class="actions">
-                        <button class="btn btn-sm btn-info me-1" [routerLink]="['/agent/policies', policy.policyNumber]">
-                            View
-                        </button>
-                        <button *ngIf="policy.policyStatus === 'DRAFT'" class="btn btn-sm btn-secondary me-1"
-                            (click)="editPolicy(policy)">Edit</button>
-                        <button *ngIf="policy.policyStatus === 'DRAFT'" class="btn btn-sm btn-success me-1"
-                            (click)="transitionStatus(policy, 'ACTIVE')">Activate</button>
-                        <button *ngIf="policy.policyStatus === 'ACTIVE'" class="btn btn-sm btn-primary me-1"
-                            (click)="transitionStatus(policy, 'RENEWED')">Renew</button>
-                        <button *ngIf="policy.policyStatus === 'ACTIVE'" class="btn btn-sm btn-warning me-1"
-                            (click)="transitionStatus(policy, 'SUSPENDED')">Suspend</button>
-                        <button *ngIf="policy.policyStatus !== 'CANCELLED'" class="btn btn-sm btn-danger"
-                            (click)="transitionStatus(policy, 'CANCELLED')">Cancel</button>
-                    </td>
-                </tr>
+                @for (policy of paginatedPolicies; track $index) {
+                    <tr>
+                        <td>{{ policy.policyNumber }}</td>
+                        <td>{{ policy.policyType }}</td>
+                        <td>{{ policy.customerCode }}</td>
+                        <td>{{ policy.agentCode }}</td>
+                        <td>{{ policy.premiumAmount | currency:'INR' }}</td>
+                        <td>{{ policy.startDate | date }}</td>
+                        <td>{{ policy.endDate | date }}</td>
+                        <td>
+                            <span class="badge" [ngClass]="{
+                        'bg-success': policy.policyStatus === 'ACTIVE',
+                        'bg-warning text-dark': policy.policyStatus === 'DRAFT',
+                        'bg-warning': policy.policyStatus === 'SUSPENDED',
+                        'bg-danger': policy.policyStatus === 'CANCELLED' || policy.policyStatus === 'EXPIRED',
+                        'bg-primary': policy.policyStatus === 'RENEWED'
+                    }">
+                                {{ policy.policyStatus }}
+                            </span>
+                        </td>
+                        <td class="actions">
+                            <button class="btn btn-sm btn-info me-1" [routerLink]="['/agent/policies', policy.policyNumber]">
+                                View
+                            </button>
+                            @if (policy.policyStatus === 'DRAFT') {
+                                <button class="btn btn-sm btn-secondary me-1" (click)="editPolicy(policy)">Edit</button>
+                                <button class="btn btn-sm btn-success me-1" (click)="transitionStatus(policy, 'ACTIVE')">Activate</button>
+                            } @else if (policy.policyStatus === 'ACTIVE') {
+                                <button class="btn btn-sm btn-primary me-1" (click)="transitionStatus(policy, 'RENEWED')">Renew</button>
+                                <button class="btn btn-sm btn-warning me-1" (click)="transitionStatus(policy, 'SUSPENDED')">Suspend</button>
+                            }
+                             
+                            @if (policy.policyStatus !== 'CANCELLED') {
+                                <button class="btn btn-sm btn-danger" (click)="transitionStatus(policy, 'CANCELLED')">Cancel</button>
+                            }
+                        </td>
+                    </tr>
+                }
             </tbody>
         </table>
     </div>
@@ -100,8 +103,8 @@
 <!-- Pagination controls -->
 <div class="d-flex justify-content-between align-items-center mt-3">
     <div>
-        <label>Rows per page:</label>
-        <select class="form-select d-inline-block w-auto ms-2" [ngModel]="pageSize()"
+        <label for="page-size">Rows per page:</label>
+        <select id="page-size" class="form-select d-inline-block w-auto ms-2" [ngModel]="pageSize()"
             (ngModelChange)="changePageSize($event)">
             <option [ngValue]="10">10</option>
             <option [ngValue]="25">25</option>
@@ -115,29 +118,13 @@
             Next
         </button>
     </div>
-    <p-dialog header="Policy Details" [visible]="viewDialogVisible()" [modal]="true" [appendTo]="'body'"
-        [style]="{width: '600px'}" (onHide)="closeViewDialog()">
-
-        <div *ngIf="selectedPolicy() as policy">
-            <div class="mb-2"><strong>Policy Number:</strong> {{ policy.policyNumber }}</div>
-            <div class="mb-2"><strong>Type:</strong> {{ policy.policyType }}</div>
-            <div class="mb-2"><strong>Status:</strong> {{ policy.policyStatus }}</div>
-            <div class="mb-2"><strong>Customer ID:</strong> {{ policy.customerCode }}</div>
-            <div class="mb-2"><strong>Agent ID:</strong> {{ policy.agentCode }}</div>
-            <div class="mb-2"><strong>Sum Insured:</strong> {{ policy.sumInsured | currency:'INR' }}</div>
-            <div class="mb-2"><strong>Premium Amount:</strong> {{ policy.premiumAmount | currency:'INR' }}</div>
-            <div class="mb-2"><strong>Start Date:</strong> {{ policy.startDate | date }}</div>
-            <div class="mb-2"><strong>End Date:</strong> {{ policy.endDate | date }}</div>
-            <div class="mb-2"><strong>Description:</strong> {{ policy.description }}</div>
-        </div>
-    </p-dialog>
     <p-dialog header="Edit Policy" [visible]="editDialogVisible()" [modal]="true" [appendTo]="'body'"
         [style]="{width: '600px'}" (onHide)="editDialogVisible.set(false)">
 
-        <div *ngIf="editPolicyData() as editData">
+        @if (editPolicyData(); as editData) {
             <div class="mb-3">
-                <label class="form-label">Policy Type</label>
-                <select class="form-select" [(ngModel)]="editData.policyType">
+                <label class="form-label" for="edit-policyType">Policy Type</label>
+                <select id="edit-policyType" class="form-select" [(ngModel)]="editData.policyType">
                     <option value="LIFE">LIFE</option>
                     <option value="HEALTH">HEALTH</option>
                     <option value="MOTOR">MOTOR</option>
@@ -146,30 +133,30 @@
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Sum Insured</label>
-                <input type="number" class="form-control" [(ngModel)]="editData.sumInsured">
+                <label class="form-label" for="edit-sumInsured">Sum Insured</label>
+                <input id="edit-sumInsured" type="number" class="form-control" [(ngModel)]="editData.sumInsured">
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Start Date</label>
-                <input type="date" class="form-control" [(ngModel)]="editData.startDate">
+                <label class="form-label" for="edit-startDate">Start Date</label>
+                <input id="edit-startDate" type="date" class="form-control" [(ngModel)]="editData.startDate">
             </div>
 
             <div class="mb-3">
-                <label class="form-label">End Date</label>
-                <input type="date" class="form-control" [(ngModel)]="editData.endDate">
+                <label class="form-label" for="edit-endDate">End Date</label>
+                <input id="edit-endDate" type="date" class="form-control" [(ngModel)]="editData.endDate">
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Description</label>
-                <textarea class="form-control" [(ngModel)]="editData.description"></textarea>
+                <label class="form-label" for="edit-description">Description</label>
+                <textarea id="edit-description" class="form-control" [(ngModel)]="editData.description"></textarea>
             </div>
 
             <div class="text-end">
                 <button class="btn btn-secondary me-2" (click)="editDialogVisible.set(false)">Cancel</button>
                 <button class="btn btn-primary" (click)="savePolicyEdits()">Save</button>
             </div>
-        </div>
+        }
     </p-dialog>
 
 </div>

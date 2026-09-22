@@ -74,27 +74,29 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let policy of policies()">
-              <td>{{ policy.policyNumber }}</td>
-              <td>{{ policy.policyType }}</td>
-              <td>
-                <span class="badge" [ngClass]="{
-                  'bg-success': policy.policyStatus === 'ACTIVE',
-                  'bg-danger': policy.policyStatus === 'CANCELLED',
-                  'bg-warning text-dark': policy.policyStatus === 'SUSPENDED',
-                  'text-dark': policy.policyStatus === 'DRAFT',
-                  'bg-primary': policy.policyStatus === 'RENEWED',
-                  'bg-dark': policy.policyStatus === 'EXPIRED'
-                }">
-                  {{ policy.policyStatus }}
-                </span>
-              </td>
-              <td>{{ policy.customerCode }}</td>
-              <td>{{ policy.sumInsured | currency:'INR' }}</td>
-              <td>{{ policy.premiumAmount | currency:'INR' }}</td>
-              <td>{{ policy.startDate | date:'mediumDate' }}</td>
-              <td>{{ policy.endDate | date:'mediumDate' }}</td>
-            </tr>
+            @for (policy of policies(); track $index) {
+              <tr>
+                <td>{{ policy.policyNumber }}</td>
+                <td>{{ policy.policyType }}</td>
+                <td>
+                  <span class="badge" [ngClass]="{
+                    'bg-success': policy.policyStatus === 'ACTIVE',
+                    'bg-danger': policy.policyStatus === 'CANCELLED',
+                    'bg-warning text-dark': policy.policyStatus === 'SUSPENDED',
+                    'text-dark': policy.policyStatus === 'DRAFT',
+                    'bg-primary': policy.policyStatus === 'RENEWED',
+                    'bg-dark': policy.policyStatus === 'EXPIRED'
+                  }">
+                    {{ policy.policyStatus }}
+                  </span>
+                </td>
+                <td>{{ policy.customerCode }}</td>
+                <td>{{ policy.sumInsured | currency:'INR' }}</td>
+                <td>{{ policy.premiumAmount | currency:'INR' }}</td>
+                <td>{{ policy.startDate | date:'mediumDate' }}</td>
+                <td>{{ policy.endDate | date:'mediumDate' }}</td>
+              </tr>
+            }
           </tbody>
         </table>
       </div>

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { Policy } from '../../../interface/policy';
 import { PolicyAudit } from '../../../interface/policyAudit';
 import { ButtonModule } from 'primeng/button';
@@ -26,7 +26,7 @@ export class Dashboard implements OnInit {
 
   private readonly server: string = 'http://localhost:8080/api/v1';
 
-  constructor(private http: HttpClient) {}
+  http = inject(HttpClient);
 
   ngOnInit(): void {
     this.loadPolicyData();

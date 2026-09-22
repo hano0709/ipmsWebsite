@@ -1,4 +1,4 @@
-import { Component, signal, OnInit } from '@angular/core';
+import { Component, signal, OnInit, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ButtonModule } from 'primeng/button';
 import { RouterLink } from '@angular/router';
@@ -22,9 +22,8 @@ export class Dashboard implements OnInit {
   myPolicies = signal<number>(0);
   myActivePolicies = signal<number>(0);
   renewalDue = signal<number>(0);
-  recentChanges = signal<any[]>([]);
 
-  constructor(private http: HttpClient) {}
+  http = inject(HttpClient);
 
   ngOnInit(): void {
     this.loadPolicies();
