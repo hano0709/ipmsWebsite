@@ -17,7 +17,7 @@ export class PolicyDetails implements OnInit {
   private route = inject(ActivatedRoute);
   private http = inject(HttpClient);
 
-  private readonly server = 'http://localhost:8080/api/v1';
+  private readonly server = 'https://localhost:8080/api/v1';
 
   // Signals for state
   policy = signal<Policy | null>(null);

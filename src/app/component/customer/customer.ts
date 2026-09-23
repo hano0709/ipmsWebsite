@@ -25,7 +25,7 @@ export class Customer implements OnInit {
   breadcrumbs: { label: string, url: string }[] = [];
 
   notificationCount = 3;
-  private readonly server: string = 'http://localhost:8080/api/v1';
+  private readonly server: string = 'https://localhost:8080/api/v1';
   customer: customerInterface | null = null;
 
   router = inject(Router);

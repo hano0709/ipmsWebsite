@@ -21,7 +21,7 @@ import { Router } from '@angular/router';
   styleUrl: './policy-form.css',
 })
 export class PolicyForm implements OnInit {
-  private readonly server = 'http://localhost:8080/api/v1';
+  private readonly server = 'https://localhost:8080/api/v1';
 
   currentStep = signal(1);
   form!: FormGroup;

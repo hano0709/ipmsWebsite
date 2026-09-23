@@ -12,7 +12,7 @@ export const RefreshInterceptor: HttpInterceptorFn = (req, next) => {
       if (err.status === 401) {
         const refreshToken = localStorage.getItem('refreshToken');
         if (refreshToken) {
-          return http.post<RefreshResponse>('http://localhost:8080/api/v1/auth/refresh', { refreshToken })
+          return http.post<RefreshResponse>('https://localhost:8080/api/v1/auth/refresh', { refreshToken })
             .pipe(
               switchMap(res => {
                 localStorage.setItem('jwt', res.accessToken);

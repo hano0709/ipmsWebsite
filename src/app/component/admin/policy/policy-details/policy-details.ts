@@ -19,7 +19,7 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./policy-details.css']
 })
 export class PolicyDetails implements OnInit {
-  private readonly server = 'http://localhost:8080/api/v1';
+  private readonly server = 'https://localhost:8080/api/v1';
 
   // Signals for state
   policy = signal<Policy | null>(null);

@@ -18,7 +18,7 @@ import { RouterModule } from '@angular/router';
   styleUrl: './policies-list.css'
 })
 export class PoliciesList implements OnInit {
-  private readonly server = 'http://localhost:8080/api/v1';
+  private readonly server = 'https://localhost:8080/api/v1';
 
   policies = signal<Policy[]>([]);
   pageSize = signal(10);

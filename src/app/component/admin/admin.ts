@@ -28,7 +28,7 @@ export class Admin implements OnInit {
   breadcrumbs: { label: string, url: string }[] = [];
   notifications = signal<notification[]>([]);
   notificationCount = signal(0);
-  private readonly server: string = 'http://localhost:8080/api/v1';
+  private readonly server: string = 'https://localhost:8080/api/v1';
 
   private router = inject(Router);
   private route = inject(ActivatedRoute);

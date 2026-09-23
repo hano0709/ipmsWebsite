@@ -16,7 +16,7 @@ import { Customer } from '../../../interface/customer';
 export class Dashboard implements OnInit {
   private http = inject(HttpClient);
 
-  private readonly server = 'http://localhost:8080/api/v1';
+  private readonly server = 'https://localhost:8080/api/v1';
 
   policies = signal<Policy[]>([]);
   myPolicies = signal<number>(0);

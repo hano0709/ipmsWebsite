@@ -31,7 +31,7 @@ export class Agent implements OnInit {
   currentAgent: agentInterface | null = null;
   notifications = signal<notification[]>([]);
   notificationCount = signal(0);
-  private readonly server: string = 'http://localhost:8080/api/v1';
+  private readonly server: string = 'https://localhost:8080/api/v1';
 
   router = inject(Router);
   route = inject(ActivatedRoute);

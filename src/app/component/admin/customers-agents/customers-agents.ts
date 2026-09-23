@@ -24,7 +24,7 @@ type EditableCustomerField = 'fullName' | 'dateOfBirth' | 'gender' | 'phone' | '
 })
 
 export class CustomersAgentsComponent implements OnInit {
-  private readonly server: string = 'http://localhost:8080/api/v1';
+  private readonly server: string = 'https://localhost:8080/api/v1';
 
   customers = signal<Customer[]>([]);
   selectedCustomer: Customer | null = null;

@@ -7,7 +7,7 @@ import { User } from '../interface/user';
   providedIn: 'root',
 })
 export class UserService {
-  private readonly server: string = 'http://localhost:8080/api/v1';
+  private readonly server: string = 'https://localhost:8080/api/v1';
 
   http = inject(HttpClient);
 

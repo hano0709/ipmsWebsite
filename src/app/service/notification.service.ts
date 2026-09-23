@@ -5,7 +5,7 @@ import { notification } from '../interface/notification';
 
 @Injectable({ providedIn: 'root' })
 export class NotificationService {
-  private readonly server = 'http://localhost:8080/api/v1';
+  private readonly server = 'https://localhost:8080/api/v1';
 
   http = inject(HttpClient);
 

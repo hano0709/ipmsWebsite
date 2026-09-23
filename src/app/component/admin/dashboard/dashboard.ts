@@ -24,7 +24,7 @@ export class Dashboard implements OnInit {
   totalCustomers = signal(0);
   recentChanges = signal<PolicyAudit[]>([]);
 
-  private readonly server: string = 'http://localhost:8080/api/v1';
+  private readonly server: string = 'https://localhost:8080/api/v1';
 
   http = inject(HttpClient);
 
