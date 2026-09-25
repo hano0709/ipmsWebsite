@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { DrawerModule } from 'primeng/drawer';
+import { Router } from '@angular/router';
 
 type EditableCustomerField = 'fullName' | 'dateOfBirth' | 'gender' | 'phone' | 'address' | 'kycStatus';
 
@@ -48,11 +49,18 @@ export class Customers implements OnInit {
   newEmail = '';
   newPassword = '';
 
-  http = inject(HttpClient);
+  private http = inject(HttpClient);
   private cd = inject(ChangeDetectorRef);
+  private router = inject(Router);
 
   ngOnInit(): void {
     this.loadCustomers();
+
+    const url = this.router.url;
+
+    if (url.includes('/customers/add')) {
+    this.openAddPanel();
+    }
   }
 
   loadCustomers(page = 0): void {
