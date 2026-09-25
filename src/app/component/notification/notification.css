@@ -1,0 +1,11 @@
+.card {
+  border-radius: 10px;
+}
+
+.border {
+  transition: all 0.2s ease;
+}
+
+.border:hover {
+  background-color: #f8f9fa;
+}

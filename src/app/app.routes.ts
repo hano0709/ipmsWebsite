@@ -37,7 +37,7 @@ export const routes: Routes = [
           }
         ]
       },
-      //   { path: 'notifications', loadComponent: () => import('./component/notifications/notifications').then(m => m.Notifications), data: { breadcrumb: 'Notifications' } }
+      { path: 'notifications', loadComponent: () => import('./component/notification/notification').then(m => m.Notification), data: { breadcrumb: 'Notifications' } },
       { path: 'customers/add', loadComponent: () => import('./component/admin/customers-agents/customers-agents').then(m => m.CustomersAgentsComponent), data: { breadcrumb: 'Customer & Agents Management' } },
       { path: 'agents/add', loadComponent: () => import('./component/admin/customers-agents/customers-agents').then(m => m.CustomersAgentsComponent), data: { breadcrumb: 'Customer & Agents Management' } },
     ]
@@ -71,7 +71,7 @@ export const routes: Routes = [
            }
          ]
       },
-      //{ path: 'notifications', loadComponent: () => import('./component/notifications/notifications').then(m => m.Notifications), data: { breadcrumb: 'Notifications' } }
+      { path: 'notifications', loadComponent: () => import('./component/notification/notification').then(m => m.Notification), data: { breadcrumb: 'Notifications' } },
       { path: 'customers/add', loadComponent: () => import('./component/agent/customers/customers').then(m => m.Customers), data: { breadcrumb: 'Customer Management' } },
     ]
   },
@@ -97,7 +97,7 @@ export const routes: Routes = [
            }
          ]
       },
-    // { path: 'notifications', loadComponent: () => import('./component/notifications/notifications').then(m => m.Notifications), data: { breadcrumb: 'Notifications' } 
+      { path: 'notifications', loadComponent: () => import('./component/notification/notification').then(m => m.Notification), data: { breadcrumb: 'Notifications' } }
     ]
   },
   { path: 'unauthorized', loadComponent: () => import('./component/unauthorized/unauthorized').then(m => m.Unauthorized) },

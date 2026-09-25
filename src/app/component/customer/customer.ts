@@ -1,11 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit, signal } from '@angular/core';
 import { Router, ActivatedRoute, NavigationEnd, RouterLink, RouterLinkActive, RouterOutlet, UrlSegment } from '@angular/router';
 import { Avatar } from 'primeng/avatar';
 import { Button } from 'primeng/button';
 import { filter } from 'rxjs/operators';
 import { Customer as customerInterface } from '../../interface/customer';
+import { NotificationService } from '../../service/notification.service';
+import { notification } from '../../interface/notification';
+import { PopoverModule } from 'primeng/popover';
 
 @Component({
   selector: 'app-customer',
@@ -18,13 +21,13 @@ import { Customer as customerInterface } from '../../interface/customer';
     RouterLinkActive,
     RouterOutlet,
     Avatar,
-    Button
+    Button,
+    PopoverModule
   ]
 })
 export class Customer implements OnInit {
   breadcrumbs: { label: string, url: string }[] = [];
 
-  notificationCount = 3;
   private readonly server: string = 'https://localhost:8080/api/v1';
   customer: customerInterface | null = null;
 
@@ -32,6 +35,10 @@ export class Customer implements OnInit {
   route = inject(ActivatedRoute);
   http = inject(HttpClient);
   cdr = inject(ChangeDetectorRef);
+  notificationService = inject(NotificationService);
+
+  notifications = this.notificationService.notifications;
+  notificationCount = this.notificationService.notificationCount;
 
   ngOnInit(): void {
     this.loadCustomer();
@@ -39,6 +46,7 @@ export class Customer implements OnInit {
     this.buildBreadcrumbs();
     
     this.setupBreadcrumbs();
+    this.notificationService.loadNotifications();
   }
 
   private loadCustomer(): void {
@@ -76,6 +84,10 @@ export class Customer implements OnInit {
     }
 
     this.breadcrumbs = crumbs;
+  }
+
+  markAsRead(id: number): void {
+    this.notificationService.markAsRead(id);
   }
 
   logout(): void {

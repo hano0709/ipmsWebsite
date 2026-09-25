@@ -19,6 +19,34 @@
 
     <!-- Right side -->
     <div class="d-flex align-items-center">
+      <p-button
+        icon="pi pi-bell"
+        [badge]="notificationCount().toString()"
+        badgeSeverity="danger"
+        [rounded]="true"
+        [text]="true"
+        ariaLabel="Notifications"
+        styleClass="notification-button me-3"
+        (onClick)="popover.toggle($event)">
+      </p-button>
+
+      <p-popover #popover styleClass="notification-panel">
+        @if (notifications().length) {
+          @for (notif of notifications(); track notif.id) {
+            <div class="p-2 border-bottom notification-item"
+                (click)="markAsRead(notif.id)"
+                (keyup.enter)="markAsRead(notif.id)"
+                tabindex="0">
+              <strong class="text-primary">{{ notif.title }}</strong>
+              <p class="mb-1">{{ notif.message }}</p>
+              <small class="text-muted">{{ notif.createdAt | date:'short' }}</small>
+            </div>
+          }
+        } @else {
+          <p class="text-muted m-2">No new notifications</p>
+        }
+      </p-popover>
+      
       <p-avatar icon="pi pi-user" shape="circle" ariaLabel="Customer profile" class="me-2"></p-avatar>
       <span class="fw-bold">{{ customer?.fullName }}</span>
     </div>
