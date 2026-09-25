@@ -72,6 +72,7 @@ export const routes: Routes = [
          ]
       },
       //{ path: 'notifications', loadComponent: () => import('./component/notifications/notifications').then(m => m.Notifications), data: { breadcrumb: 'Notifications' } }
+      { path: 'customers/add', loadComponent: () => import('./component/agent/customers/customers').then(m => m.Customers), data: { breadcrumb: 'Customer Management' } },
     ]
   },
   {
