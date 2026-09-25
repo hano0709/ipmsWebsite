@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Customer } from '../../../interface/customer';
 import { CommonModule } from '@angular/common';
@@ -26,6 +26,9 @@ export class Customers implements OnInit {
   selectedCustomer: Customer | null = null;
   searchName = '';
   filterKyc = '';
+  showPassword = false;
+  emailError = '';
+  passwordError = '';
   currentPage = signal(0);
   pageSize = 10;
   hasNextPage = signal(true);
@@ -46,6 +49,7 @@ export class Customers implements OnInit {
   newPassword = '';
 
   http = inject(HttpClient);
+  private cd = inject(ChangeDetectorRef);
 
   ngOnInit(): void {
     this.loadCustomers();
@@ -153,11 +157,17 @@ export class Customers implements OnInit {
   }
 
   openAddPanel(): void {
+    this.emailError = '';
+    this.passwordError = '';
     this.addPanelVisible = true;
   }
 
   closeAddPanel(): void {
     this.addPanelVisible = false;
+
+    this.emailError = '';
+    this.passwordError = '';
+
     this.resetForms();
   }
 
@@ -173,7 +183,23 @@ export class Customers implements OnInit {
         this.closeAddPanel();
         this.loadCustomers(0);
       },
-      error: (err) => console.error('Failed to create customer', err)
+      error: (err) => {
+          console.error(err);
+          
+          const message = err?.error?.message ?? 'Something went wrong';
+          console.error(message);
+          
+          this.emailError = '';
+          this.passwordError = '';
+
+          if (message.toLowerCase().includes('email')) {
+            this.emailError = message;
+          } else if (message.toLowerCase().includes('password')) {
+              this.passwordError = message;
+          }
+
+          this.cd.detectChanges();
+        }
     });
   }
 
