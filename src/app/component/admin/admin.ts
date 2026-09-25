@@ -26,8 +26,6 @@ import { NotificationService } from '../../service/notification.service';
 })
 export class Admin implements OnInit {
   breadcrumbs: { label: string, url: string }[] = [];
-  notifications = signal<notification[]>([]);
-  notificationCount = signal(0);
   private readonly server: string = 'https://localhost:8080/api/v1';
 
   private router = inject(Router);
@@ -35,10 +33,13 @@ export class Admin implements OnInit {
   private http = inject(HttpClient);
   private notificationService = inject(NotificationService);
 
+  notifications = this.notificationService.notifications;
+  notificationCount = this.notificationService.notificationCount;
+
   ngOnInit(): void {
     this.buildBreadcrumbs();
     this.setupBreadcrumbs();
-    this.loadNotifications();
+    this.notificationService.loadNotifications();
   }
 
   private setupBreadcrumbs(): void {
@@ -46,7 +47,7 @@ export class Admin implements OnInit {
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
       .subscribe(() => {
         this.buildBreadcrumbs();
-        this.loadNotifications();
+        this.notificationService.loadNotifications();
       });
   }
 
@@ -69,25 +70,8 @@ export class Admin implements OnInit {
     this.breadcrumbs = crumbs;
   }
 
-  private loadNotifications(): void {
-    this.notificationService.getNotifications().subscribe({
-      next: (data) => {
-        this.notifications.set(data);
-        this.notificationCount.set(data.length);
-      },
-      error: (err) => {console.error('Failed to load Notification', err)}
-    });
-  }
-
   markAsRead(id: number): void {
-    this.http.patch(`${this.server}/notifications/${id}/read`, {})
-      .subscribe({
-        next: () => {
-          this.notifications.update(list => list.filter(n => n.id !== id));
-          this.notificationCount.set(this.notifications().length);
-        },
-        error: (err) => console.error(`Failed to mark notification ${id} as read`, err)
-      });
+    this.notificationService.markAsRead(id);
   }
 
   trackById(index: number, notif: notification): number {

@@ -7,7 +7,6 @@ import { Button } from 'primeng/button';
 import { PopoverModule } from 'primeng/popover';
 import { filter } from 'rxjs/operators';
 import { Agent as agentInterface } from '../../interface/agent';
-import { notification } from '../../interface/notification';
 import { NotificationService } from '../../service/notification.service';
 
 @Component({
@@ -29,8 +28,6 @@ export class Agent implements OnInit {
   breadcrumbs: { label: string, url: string }[] = [];
 
   currentAgent: agentInterface | null = null;
-  notifications = signal<notification[]>([]);
-  notificationCount = signal(0);
   private readonly server: string = 'https://localhost:8080/api/v1';
 
   router = inject(Router);
@@ -38,6 +35,9 @@ export class Agent implements OnInit {
   http = inject(HttpClient);
   cdr = inject(ChangeDetectorRef);
   notificationService = inject(NotificationService);
+
+  notifications = this.notificationService.notifications;
+  notificationCount = this.notificationService.notificationCount;
   
   ngOnInit(): void {
     this.http.get<agentInterface>(`${this.server}/agents/me`).subscribe(agent => {
@@ -47,7 +47,7 @@ export class Agent implements OnInit {
 
     this.buildBreadcrumbs();
     this.setupBreadcrumbs();
-    this.loadNotifications();
+    this.notificationService.loadNotifications();
   }
 
   private setupBreadcrumbs(): void {
@@ -77,25 +77,8 @@ export class Agent implements OnInit {
     this.breadcrumbs = crumbs;
   }
 
-   private loadNotifications(): void {
-    this.notificationService.getNotifications().subscribe({
-      next: (data) => {
-        this.notifications.set(data);
-        this.notificationCount.set(data.length);
-      },
-      error: (err) => {console.error('Failed to load Notification', err)}
-    });
-  }
-
   markAsRead(id: number): void {
-    this.http.patch(`${this.server}/notifications/${id}/read`, {})
-      .subscribe({
-        next: () => {
-          this.notifications.update(list => list.filter(n => n.id !== id));
-          this.notificationCount.set(this.notifications().length);
-        },
-        error: (err) => console.error(`Failed to mark notification ${id} as read`, err)
-      });
+    this.notificationService.markAsRead(id);
   }
 
   logout(): void {
