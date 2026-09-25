@@ -38,7 +38,7 @@ export class Login {
         }
       },
       error: (err) => {
-        this.errorMessage = err;
+        this.errorMessage = "Invalid email or password";
         console.error('Login Failed: ', err);
         this.cdr.detectChanges();
       }
